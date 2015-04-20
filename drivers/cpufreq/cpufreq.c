@@ -1114,7 +1114,7 @@ static int __cpufreq_add_dev(struct device *dev, struct subsys_interface *sif,
 	gov = __find_governor(per_cpu(cpufreq_policy_save, cpu).gov);
 	if (gov) {
 		policy->governor = gov;
-		pr_debug("Restoring governor %s for cpu %d\n",
+		pr_info("Restoring governor %s for cpu %d\n",
 		       policy->governor->name, cpu);
 	}
 	if (per_cpu(cpufreq_policy_save, cpu).min) {
@@ -1125,7 +1125,7 @@ static int __cpufreq_add_dev(struct device *dev, struct subsys_interface *sif,
 		policy->max = per_cpu(cpufreq_policy_save, cpu).max;
 		policy->user_policy.max = policy->max;
 	}
-	pr_debug("Restoring CPU%d user policy min %d and max %d\n", cpu,
+	pr_info("Restoring CPU%d user policy min %d and max %d\n", cpu,
 		 policy->min, policy->max);
 #endif
 
