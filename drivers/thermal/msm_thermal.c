@@ -54,6 +54,9 @@
 #define THERM_SECURE_BITE_CMD 8
 #define SENSOR_SCALING_FACTOR 1
 
+unsigned int temp_threshold = 85;
+module_param(temp_threshold, int, 0755);
+
 static struct msm_thermal_data msm_thermal_info;
 static struct delayed_work check_temp_work;
 static bool core_control_enabled;
