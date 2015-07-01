@@ -35,14 +35,13 @@ MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Tomato
 
 compile_kernel ()
 {
-echo -e "***********************************************"
-echo "          Compiling RaZorKernel kernel          "
-echo -e "***********************************************"
+echo -e "**********************************************************************************************"
+echo "                    "
+echo "                                        Compiling RaZorKernel kernel                    "
+echo "                    "
+echo -e "**********************************************************************************************"
 make cyanogenmod_tomato-64_defconfig
-make menuconfig
-make Image -j4
-make dtbs -j4
-make modules -j4
+make -j4
 $DTBTOOL -2 -o $KERNEL_DIR/arch/arm64/boot/dt.img -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm64/boot/dts/
 if ! [ -a $KERN_IMG ];
 then
@@ -73,10 +72,10 @@ rm -rf $KERNEL_DIR/arch/arm/boot/dt.img
 compile_kernel
 ;;
 esac
-cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR
-mv $MODULES_DIR/Image $MODULES_DIR/zImage
+cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../tools
+mv $MODULES_DIR/../tools/Image $MODULES_DIR/../tools/zImage
+cp $MODULES_DIR/wlan.ko $MODULES_DIR/../system/lib/modules
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
-echo "Cleaning The Directory"
-make clean
+echo "Enjoy RazorKernel"
