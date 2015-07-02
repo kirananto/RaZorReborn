@@ -73,6 +73,12 @@ config IOSCHED_BFQ
 	  applications. If compiled built-in (saying Y here), BFQ can
 	  be configured to support hierarchical scheduling.
 
+config IOSCHED_TRIPNDROID
+	tristate "Tripndroid"
+	default n
+	---help---
+	  The Trip N Droid scheduler
+
 config CGROUP_BFQIO
 	bool "BFQ hierarchical scheduling support"
 	depends on CGROUPS && IOSCHED_BFQ=y
@@ -129,6 +135,9 @@ choice
 	config DEFAULT_NOOP
 		bool "No-op"
 
+	config DEFAULT_TRIPNDROID
+		bool "TRIPNDROID" if IOSCHED_TRIPNDROID=y
+
 endchoice
 
 config DEFAULT_IOSCHED
@@ -139,6 +148,7 @@ config DEFAULT_IOSCHED
 	default "fiops" if DEFAULT_FIOPS
 	default "bfq" if DEFAULT_BFQ
 	default "noop" if DEFAULT_NOOP
+	default "tripndroid" if DEFAULT_TRIPNDROID
 
 endmenu
 
