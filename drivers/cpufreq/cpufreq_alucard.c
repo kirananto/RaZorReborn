@@ -35,12 +35,12 @@
  */
 
 /* Tuning Interface */
-#define MIN_SAMPLING_RATE		13000
+#define MIN_SAMPLING_RATE		10000
 #define SAMPLING_RATE			100000
-#define INC_CPU_LOAD_AT_MIN_FREQ	82
-#define INC_CPU_LOAD			82
-#define DEC_CPU_LOAD_AT_MIN_FREQ	82
-#define DEC_CPU_LOAD 			82
+#define INC_CPU_LOAD_AT_MIN_FREQ	90
+#define INC_CPU_LOAD			90
+#define DEC_CPU_LOAD_AT_MIN_FREQ	90
+#define DEC_CPU_LOAD 			90
 
 #define CPUS_UP_RATE			1
 #define CPUS_DOWN_RATE			2
@@ -503,7 +503,8 @@ static void alucard_check_cpu(struct cpufreq_alucard_cpuinfo *this_alucard_cpuin
 	/*printk(KERN_ERR "TIMER CPU[%u], wall[%u], idle[%u]\n",cpu, wall_time, idle_time);*/
 	if (wall_time >= idle_time) { /*if wall_time < idle_time, evaluate cpu load next time*/
 		cur_load = wall_time > idle_time ? (100 * (wall_time - idle_time)) / wall_time : 1;/*if wall_time is equal to idle_time cpu_load is equal to 1*/
- 
+
+		cpufreq_notify_utilization(cpu_policy, cur_load);
 
 		if (this_alucard_cpuinfo->up_rate > cpus_up_rate)
 				this_alucard_cpuinfo->up_rate = 1;
@@ -742,3 +743,4 @@ fs_initcall(cpufreq_gov_alucard_init);
 module_init(cpufreq_gov_alucard_init);
 #endif
 module_exit(cpufreq_gov_alucard_exit);
+
