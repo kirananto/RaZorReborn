@@ -944,7 +944,7 @@ static void do_dbs_timer(struct work_struct *work)
 		container_of(work, struct cpu_dbs_info_s, work.work);
 	unsigned int cpu = dbs_info->cpu;
 	int sample_type = dbs_info->sample_type;
-	int delay = msecs_to_jiffies(50);
+	int delay = msecs_to_jiffies(1);
 
 	mutex_lock(&dbs_info->timer_mutex);
 
