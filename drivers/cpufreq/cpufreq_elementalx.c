@@ -29,7 +29,7 @@
 #include <linux/msm_kgsl.h>
 #include <linux/sched/rt.h>
 
-#define DEF_SAMPLING_RATE			(50000)
+#define DEF_SAMPLING_RATE			(80000)
 #define DEF_FREQUENCY_DOWN_DIFFERENTIAL		(10)
 #define DEF_FREQUENCY_UP_THRESHOLD		(90)
 #define DEF_SAMPLING_DOWN_FACTOR		(1)
@@ -766,7 +766,7 @@ static void dbs_check_cpu(struct cpu_dbs_info_s *this_dbs_info)
 		if (cur_load > max_load_freq)
 			max_load_freq = cur_load * policy->cur;
 	}
-
+cpufreq_notify_utilization(policy, cur_load);
 	for_each_online_cpu(j) {
 		struct cpu_dbs_info_s *j_dbs_info;
 		j_dbs_info = &per_cpu(od_cpu_dbs_info, j);
