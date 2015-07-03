@@ -631,4 +631,14 @@ source "lib/Kconfig"
 
 source "arch/arm64/mm/Kconfig"
 
-source "arch/arm64/hotplug/Kconfig"
+source "arch/arm64/hotplug/ALUCARD/Kconfig"
+
+source "arch/arm64/hotplug/BRICKED/Kconfig"
+
+source "arch/arm64/hotplug/INTELLIPLUG/Kconfig"
+
+source "arch/arm64/hotplug/MSMHOTPLUG/Kconfig"
+
+source "arch/arm64/hotplug/MSMSLEEPER/Kconfig"
+
+source "arch/arm64/hotplug/THUNDERPLUG/Kconfig"
