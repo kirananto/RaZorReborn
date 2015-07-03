@@ -74,7 +74,7 @@ compile_kernel
 esac
 cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../tools
 mv $MODULES_DIR/../tools/Image $MODULES_DIR/../tools/zImage
-cp $MODULES_DIR/wlan.ko $MODULES_DIR/../system/lib/modules
+cp $MODULES_DIR $MODULES_DIR/../system/lib/modules
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
