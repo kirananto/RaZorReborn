@@ -1065,6 +1065,7 @@ static int msm_probe(struct platform_device *pdev)
 		goto video_fail;
 	}
 
+
 #if defined(CONFIG_MEDIA_CONTROLLER)
 	msm_v4l2_dev->mdev = kzalloc(sizeof(struct media_device),
 		GFP_KERNEL);

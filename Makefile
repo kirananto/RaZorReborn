@@ -379,8 +379,6 @@ KBUILD_CFLAGS   :=$(GRAPHITE) -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Wno-format-security \
 		   -fno-delete-null-pointer-checks -fgnu89-inline\
 		-Wno-sizeof-pointer-memaccess \
--Wdiscarded-array-qualifiers \
--Wbool-compare \
 		   -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize 				-ffast-math \
        -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
 		   -fno-aggressive-loop-optimizations
