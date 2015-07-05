@@ -125,6 +125,10 @@
 				"cdc_lines_sec_ext_sus",
 				"cdc_lines_quat_ext_act",
 				"cdc_lines_quat_ext_sus";
+				"cdc_lines_sec_ext_act",
+				"cdc_lines_sec_ext_sus",
+				"cdc_lines_quat_ext_act",
+				"cdc_lines_quat_ext_sus";
 		pinctrl-0 = <&cdc_pdm_lines_act>;
 		pinctrl-1 = <&cdc_pdm_lines_sus>;
 		pinctrl-2 = <&cross_conn_det_act>;

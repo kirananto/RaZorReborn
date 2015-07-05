@@ -84,7 +84,8 @@ obj-$(CONFIG_TOUCHSCREEN_MSTAR21XX)	+= msg21xx_ts.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_RMI4_DEV)	+= synaptics_rmi_dev.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_FW_UPDATE) 	+= synaptics_fw_update.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_RMI4)		+= synaptics_i2c_rmi4.o
-
+obj-$(CONFIG_TOUCHSCREEN_GSL1688E)  += gsl_ts_driver.o gsl_ReadArrayData.o gsl_point_id.o
+obj-$(CONFIG_TOUCHSCREEN_GSL1688E_ARM64) += gsl_ts_driver.o gsl_ReadArrayData.o gsl_point_id_arm64.o
 obj-$(CONFIG_TOUCHSCREEN_GT9XX)		+= gt9xx/
 obj-y += touchboost.o
 

@@ -1081,6 +1081,22 @@ config TOUCHSCREEN_WT_GT9XX
 
 	  If unsure, say N.
 
+config TOUCHSCREEN_WT_GT9XX_UPDATE
+	bool "Goodix touchpanel (Wingtech variant) firmware update"
+	depends on TOUCHSCREEN_WT_GT9XX
+	help
+	  Say Y here if you want GT9xx (Wingtech) firmware update.
+
+	  If unsure, say N.
+
+config TOUCHSCREEN_WT_GT9XX_DEBUG
+	bool "Goodix touchpanel (Wingtech variant) debug"
+	depends on TOUCHSCREEN_WT_GT9XX
+	help
+	  Say Y here if you want GT9xx (Wingtech) extra debug.
+
+	  If unsure, say N.
+
 config TOUCHSCREEN_YL_GT9XX
 	bool "Goodix touchpanel (YL variant)"
 	depends on I2C
