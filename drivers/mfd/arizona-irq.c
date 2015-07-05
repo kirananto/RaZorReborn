@@ -159,13 +159,6 @@ static void arizona_irq_dummy(struct irq_data *data)
 {
 }
 
-static int arizona_irq_set_wake(struct irq_data *data, unsigned int on)
-{
-	struct arizona *arizona = irq_data_get_irq_chip_data(data);
-
-	return irq_set_irq_wake(arizona->irq, on);
-}
-
 static struct irq_chip arizona_irq_chip = {
 	.name			= "arizona",
 	.irq_disable		= arizona_irq_dummy,
@@ -173,7 +166,6 @@ static struct irq_chip arizona_irq_chip = {
 	.irq_ack		= arizona_irq_dummy,
 	.irq_mask		= arizona_irq_dummy,
 	.irq_unmask		= arizona_irq_dummy,
-	.irq_set_wake		= arizona_irq_set_wake,
 };
 
 static int arizona_irq_map(struct irq_domain *h, unsigned int virq,
@@ -246,11 +238,11 @@ int arizona_irq_init(struct arizona *arizona)
 		irq_ctrl_reg = CLEARWATER_IRQ1_CTRL;
 		break;
 #endif
-#ifdef CONFIG_MFD_LARGO
+#ifdef CONFIG_MFD_CS47L24
 	case WM1831:
 	case CS47L24:
 		aod = NULL;
-		irq = &largo_irq;
+		irq = &cs47l24_irq;
 
 		ctrlif_error = false;
 		break;
@@ -263,25 +255,16 @@ int arizona_irq_init(struct arizona *arizona)
 		ctrlif_error = false;
 		break;
 #endif
-#ifdef CONFIG_MFD_VEGAS
+#ifdef CONFIG_MFD_WM8998
 	case WM8998:
 	case WM1814:
-		aod = &vegas_aod;
-		irq = &vegas_irq;
+		aod = &wm8998_aod;
+		irq = &wm8998_irq;
 
 		ctrlif_error = false;
 		break;
 #endif
-#ifdef CONFIG_MFD_MARLEY
-	case CS47L35:
-		aod = &marley_irq;
-		irq = NULL;
-
-		ctrlif_error = false;
-		irq_ctrl_reg = CLEARWATER_IRQ1_CTRL;
-		break;
-#endif
-default:
+	default:
 		BUG_ON("Unknown Arizona class device" == NULL);
 		return -EINVAL;
 	}
@@ -350,7 +333,7 @@ default:
 	if (aod) {
 		ret = regmap_add_irq_chip(arizona->regmap,
 					irq_create_mapping(arizona->virq, 0),
-					IRQF_ONESHOT, 0, aod,
+					IRQF_ONESHOT, -1, aod,
 					&arizona->aod_irq_chip);
 		if (ret != 0) {
 			dev_err(arizona->dev, "Failed to add AOD IRQs: %d\n",
@@ -362,7 +345,7 @@ default:
 	if (irq) {
 		ret = regmap_add_irq_chip(arizona->regmap,
 					  irq_create_mapping(arizona->virq, 1),
-					  IRQF_ONESHOT, 0, irq,
+					  IRQF_ONESHOT, -1, irq,
 					  &arizona->irq_chip);
 		if (ret != 0) {
 			dev_err(arizona->dev, "Failed to add main IRQs: %d\n", ret);
