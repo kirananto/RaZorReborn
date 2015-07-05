@@ -334,6 +334,11 @@ struct snd_enc_flac {
 	__u32 gain;
 } __attribute__((packed, aligned(4)));
 
+struct snd_enc_generic {
+	__u32 bw;	/* encoder bandwidth */
+	__s32 reserved[15];
+} __attribute__((packed, aligned(4)));
+
 struct snd_dec_ddp {
 	__u32 params_length;
 	__u32 params_id[18];
@@ -346,11 +351,6 @@ struct snd_dec_flac {
 	__u16 max_blk_size;
 	__u16 min_frame_size;
 	__u16 max_frame_size;
-} __attribute__((packed, aligned(4)));
-
-struct snd_enc_generic {
-	__u32 bw;	/* encoder bandwidth */
-	__s32 reserved[15];
 } __attribute__((packed, aligned(4)));
 
 union snd_codec_options {
