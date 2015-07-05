@@ -1246,7 +1246,7 @@ unsigned int max_task_load(void)
 }
 
 /* Use this knob to turn on or off HMP-aware task placement logic */
-unsigned int __read_mostly sched_enable_hmp = 1;
+unsigned int __read_mostly sched_enable_hmp = 0;
 
 /* A cpu can no longer accomodate more tasks if:
  *
@@ -1912,17 +1912,6 @@ static int select_best_cpu(struct task_struct *p, int target, int reason,
 	int small_task = is_small_task(p);
 	int boost = sched_boost();
 	int cstate, min_cstate = INT_MAX;
-	int prefer_idle = reason ? 1 : sysctl_sched_prefer_idle;
-
-	/*
-	 * PF_WAKE_UP_IDLE is a hint to scheduler that the thread waking up
-	 * (p) needs to be placed on idle cpu.
-	 */
-	if ((current->flags & PF_WAKE_UP_IDLE) ||
-			 (p->flags & PF_WAKE_UP_IDLE)) {
-		prefer_idle = 1;
-		small_task = 0;
-	}
 
 	trace_sched_task_load(p, small_task, boost, reason, sync);
 
@@ -2033,7 +2022,7 @@ static int select_best_cpu(struct task_struct *p, int target, int reason,
 	}
 
 	if (min_cstate_cpu >= 0 &&
-	    (prefer_idle ||
+	    (sysctl_sched_prefer_idle ||
 	     !(best_cpu >= 0 && mostly_idle_cpu_sync(best_cpu, sync))))
 		best_cpu = min_cstate_cpu;
 done:

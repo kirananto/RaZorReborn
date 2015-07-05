@@ -13,8 +13,6 @@ obj-y :=	open.o read_write.o file_table.o super.o \
 		pnode.o splice.o sync.o utimes.o \
 		stack.o fs_struct.o statfs.o
 
-obj-$(CONFIG_FS_TRANSPARENT_COMPRESSION) += zfile.o
-
 ifeq ($(CONFIG_BLOCK),y)
 obj-y +=	buffer.o bio.o block_dev.o direct-io.o mpage.o ioprio.o
 else
@@ -131,4 +129,3 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
 
 # Patched by YAFFS
 obj-$(CONFIG_YAFFS_FS)		+= yaffs2/
-obj-$(CONFIG_DYNAMIC_FSYNC)  += dyn_sync_cntrl.o

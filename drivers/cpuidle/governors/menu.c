@@ -118,7 +118,7 @@ struct menu_device {
 	unsigned int	exit_us;
 	unsigned int	bucket;
 	u64		correction_factor[BUCKETS];
-	unsigned int	intervals[INTERVALS];
+	u32		intervals[INTERVALS];
 	int		interval_ptr;
 };
 
@@ -187,20 +187,16 @@ static u64 div_round64(u64 dividend, u32 divisor)
  */
 static void get_typical_interval(struct menu_device *data)
 {
-	int i, divisor;
-	unsigned int max, thresh;
-	uint64_t avg, stddev;
-
-	thresh = UINT_MAX; /* Discard outliers above this value */
+	int i = 0, divisor = 0;
+	uint64_t max = 0, avg = 0, stddev = 0;
+	int64_t thresh = LLONG_MAX; /* Discard outliers above this value. */
 
 again:
 
-	/* First calculate the average of past intervals */
-	max = 0;
-	avg = 0;
-	divisor = 0;
+	/* first calculate average and standard deviation of the past */
+	max = avg = divisor = stddev = 0;
 	for (i = 0; i < INTERVALS; i++) {
-		unsigned int value = data->intervals[i];
+		int64_t value = data->intervals[i];
 		if (value <= thresh) {
 			avg += value;
 			divisor++;
@@ -210,38 +206,15 @@ again:
 	}
 	do_div(avg, divisor);
 
-	/* Then try to determine standard deviation */
-	stddev = 0;
 	for (i = 0; i < INTERVALS; i++) {
-		unsigned int value = data->intervals[i];
+		int64_t value = data->intervals[i];
 		if (value <= thresh) {
 			int64_t diff = value - avg;
 			stddev += diff * diff;
 		}
 	}
 	do_div(stddev, divisor);
-	/*
-	 * The typical interval is obtained when standard deviation is small
-	 * or standard deviation is small compared to the average interval.
-	 *
-	 * int_sqrt() formal parameter type is unsigned long. When the
-	 * greatest difference to an outlier exceeds ~65 ms * sqrt(divisor)
-	 * the resulting squared standard deviation exceeds the input domain
-	 * of int_sqrt on platforms where unsigned long is 32 bits in size.
-	 * In such case reject the candidate average.
-	 *
-	 * Use this result only if there is no timer to wake us up sooner.
-	 */
-	if (likely(stddev <= ULONG_MAX)) {
-		stddev = int_sqrt(stddev);
-		if (((avg > stddev * 6) && (divisor * 4 >= INTERVALS * 3))
-							|| stddev <= 20) {
-			if (data->expected_us > avg)
-				data->predicted_us = avg;
-			return;
-		}
-	}
-
+	stddev = int_sqrt(stddev);
 	/*
 	 * If we have outliers to the upside in our distribution, discard
 	 * those by setting the threshold to exclude these outliers, then
@@ -250,12 +223,20 @@ again:
 	 *
 	 * This can deal with workloads that have long pauses interspersed
 	 * with sporadic activity with a bunch of short pauses.
+	 *
+	 * The typical interval is obtained when standard deviation is small
+	 * or standard deviation is small compared to the average interval.
 	 */
-	if ((divisor * 4) <= INTERVALS * 3)
+	if (((avg > stddev * 6) && (divisor * 4 >= INTERVALS * 3))
+							|| stddev <= 20) {
+		data->predicted_us = avg;
 		return;
 
-	thresh = max - 1;
-	goto again;
+	} else if ((divisor * 4) > INTERVALS * 3) {
+		/* Exclude the max interval */
+		thresh = max - 1;
+		goto again;
+	}
 }
 
 /**

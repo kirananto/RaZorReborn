@@ -58,19 +58,15 @@ static short lowmem_adj[6] = {
 	1,
 	6,
 	12,
-	13,
-	15,
 };
-static int lowmem_adj_size = 6;
+static int lowmem_adj_size = 4;
 static int lowmem_minfree[6] = {
-	 3 *  512,	/* Foreground App: 	6 MB	*/
-	 2 * 1024,	/* Visible App: 	8 MB	*/
-	 4 * 1024,	/* Secondary Server: 	16 MB	*/
-	16 * 1024,	/* Hidden App: 		64 MB	*/
-	28 * 1024,	/* Content Provider: 	112 MB	*/
-	32 * 1024,	/* Empty App: 		128 MB	*/
+	3 * 512,	/* 6MB */
+	2 * 1024,	/* 8MB */
+	4 * 1024,	/* 16MB */
+	16 * 1024,	/* 64MB */
 };
-static int lowmem_minfree_size = 6;
+static int lowmem_minfree_size = 4;
 static int lmk_fast_run = 1;
 
 static unsigned long lowmem_deathpending_timeout;
@@ -81,44 +77,18 @@ static unsigned long lowmem_deathpending_timeout;
 			pr_info(x);			\
 	} while (0)
 
-static bool avoid_to_kill(uid_t uid)
-{
-	/* 
-	 * uid info
-	 * uid == 0 > root
-	 * uid == 1001 > radio
-	 * uid == 1002 > bluetooth
-	 * uid == 1010 > wifi
-	 * uid == 1014 > dhcp
-	 */
-	if (uid == 0 || uid == 1001 || uid == 1002 || uid == 1010 ||
-			uid == 1014)
-		return 1;
-	return 0;
-}
-
-static bool protected_apps(char *comm)
-{
-	if (strcmp(comm, "d.process.acore") == 0 ||
-			strcmp(comm, "ndroid.systemui") == 0 ||
-			strcmp(comm, "ndroid.contacts") == 0 ||
-			strcmp(comm, "system:ui") == 0)
-		return 1;
-	return 0;
-}
-
 static int test_task_flag(struct task_struct *p, int flag)
 {
-	struct task_struct *t;
+	struct task_struct *t = p;
 
-	for_each_thread(p,t) {
+	do {
 		task_lock(t);
 		if (test_tsk_thread_flag(t, flag)) {
 			task_unlock(t);
 			return 1;
 		}
 		task_unlock(t);
-	}
+	} while_each_thread(p, t);
 
 	return 0;
 }
@@ -295,8 +265,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 {
 	struct task_struct *tsk;
 	struct task_struct *selected = NULL;
-	const struct cred *pcred;
-	unsigned int uid = 0;
 	int rem = 0;
 	int tasksize;
 	int i;
@@ -308,15 +276,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	int other_free;
 	int other_file;
 	unsigned long nr_to_scan = sc->nr_to_scan;
-
-	rcu_read_lock();
-	tsk = current->group_leader;
-	if ((tsk->flags & PF_EXITING) && test_task_flag(tsk, TIF_MEMDIE)) {
-		set_tsk_thread_flag(current, TIF_MEMDIE);
-		rcu_read_unlock();
-		return 0;
-	}
-	rcu_read_unlock();
 
 	if (nr_to_scan > 0) {
 		if (mutex_lock_interruptible(&scan_mutex) < 0)
@@ -381,11 +340,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			if (test_task_flag(tsk, TIF_MEMDIE)) {
 				rcu_read_unlock();
 				/* give the system time to free up the memory */
-				if (!same_thread_group(current, tsk))
-					msleep_interruptible(20);
-				else
-					set_tsk_thread_flag(current,
-								TIF_MEMDIE);
+				msleep_interruptible(20);
 				mutex_unlock(&scan_mutex);
 				return 0;
 			}
@@ -400,13 +355,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			task_unlock(p);
 			continue;
 		}
-		if (fatal_signal_pending(p) ||
-				((p->flags & PF_EXITING) &&
-					test_tsk_thread_flag(p, TIF_MEMDIE))) {
-			lowmem_print(2, "skip slow dying process %d\n", p->pid);
-			task_unlock(p);
-			continue;
-		}
 		tasksize = get_mm_rss(p->mm);
 		task_unlock(p);
 		if (tasksize <= 0)
@@ -418,25 +366,11 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			    tasksize <= selected_tasksize)
 				continue;
 		}
-		pcred = __task_cred(p);
-		uid = pcred->uid;
-		if (avoid_to_kill(uid) || protected_apps(p->comm)){
-			if (tasksize * (long)(PAGE_SIZE / 1024) >= 100000){
-				selected = p;
-				selected_tasksize = tasksize;
-				selected_oom_score_adj = oom_score_adj;
-				lowmem_print(3, "select protected %d (%s), adj %hd, size %d, to kill\n",
-				     	p->pid, p->comm, oom_score_adj, tasksize);
-			} else
-			lowmem_print(3, "skip protected %d (%s), adj %hd, size %d, to kill\n",
-			     	p->pid, p->comm, oom_score_adj, tasksize);
-		} else {
-			selected = p;
-			selected_tasksize = tasksize;
-			selected_oom_score_adj = oom_score_adj;
-			lowmem_print(3, "select %d (%s), adj %hd, size %d, to kill\n",
-			     	p->pid, p->comm, oom_score_adj, tasksize);
-		}
+		selected = p;
+		selected_tasksize = tasksize;
+		selected_oom_score_adj = oom_score_adj;
+		lowmem_print(3, "select '%s' (%d), adj %hd, size %d, to kill\n",
+			     p->comm, p->pid, oom_score_adj, tasksize);
 	}
 	if (selected) {
 		lowmem_print(1, "Killing '%s' (%d), adj %hd,\n" \
@@ -549,7 +483,7 @@ static void lowmem_autodetect_oom_adj_values(void)
 		oom_adj = lowmem_adj[i];
 		oom_score_adj = lowmem_oom_adj_to_oom_score_adj(oom_adj);
 		lowmem_adj[i] = oom_score_adj;
-		lowmem_print(1, "oom_adj %hd => oom_score_adj %hd\n",
+		lowmem_print(1, "oom_adj %d => oom_score_adj %d\n",
 			     oom_adj, oom_score_adj);
 	}
 }
@@ -596,7 +530,7 @@ module_param_named(cost, lowmem_shrinker.seeks, int, S_IRUGO | S_IWUSR);
 __module_param_call(MODULE_PARAM_PREFIX, adj,
 		    &lowmem_adj_array_ops,
 		    .arr = &__param_arr_adj,
-		    S_IRUGO | S_IWUSR, 0644);
+		    S_IRUGO | S_IWUSR, -1);
 __MODULE_PARM_TYPE(adj, "array of short");
 #else
 module_param_array_named(adj, lowmem_adj, short, &lowmem_adj_size,

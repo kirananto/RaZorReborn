@@ -30,9 +30,9 @@ static int devfreq_simple_ondemand_func(struct devfreq *df,
 	struct devfreq_simple_ondemand_data *data = df->data;
 	unsigned long max = (df->max_freq) ? df->max_freq : UINT_MAX;
 	unsigned long min = (df->min_freq) ? df->min_freq : 0;
+
 	stat.private_data = NULL;
- 
- 
+
 	err = df->profile->get_dev_status(df->dev.parent, &stat);
 
 	if (err)

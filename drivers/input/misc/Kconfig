@@ -765,7 +765,6 @@ config SENSORS_AKM09911_WT
 	  To compile this driver as a module, choose M here: the
 	  module will be called akm09911_wt.
 
-
 config SENSORS_AKM8963
 	tristate "AKM8963 3-axis electronic compass sensor driver"
 	depends on I2C
@@ -777,7 +776,7 @@ config SENSORS_AKM8963
 	  To compile this driver as a module, choose M here: the
 	  module will be called akm8963.
 
-config SENSORS_STK3X1XAKM8963
+config SENSORS_STK3X1X
 	tristate "STK3X1X device driver"
 	depends on I2C
 	default n

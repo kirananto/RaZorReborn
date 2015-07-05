@@ -56,16 +56,10 @@ static int arizona_spi_probe(struct spi_device *spi)
 		regmap_32bit_config = &clearwater_32bit_spi_regmap;
 		break;
 #endif
-#ifdef CONFIG_MFD_LARGO
+#ifdef CONFIG_MFD_CS47L24
 	case WM1831:
 	case CS47L24:
-		regmap_config = &largo_spi_regmap;
-		break;
-#endif
-#ifdef CONFIG_MFD_MARLEY
-	case CS47L35:
-		regmap_config = &marley_16bit_spi_regmap;
-		regmap_32bit_config = &marley_32bit_spi_regmap;
+		regmap_config = &cs47l24_spi_regmap;
 		break;
 #endif
 	default:
@@ -121,7 +115,6 @@ static const struct spi_device_id arizona_spi_ids[] = {
 	{ "wm1840", WM1840 },
 	{ "wm1831", WM1831 },
 	{ "cs47l24", CS47L24 },
-	{ "cs47l35", CS47L35 },
 	{ },
 };
 MODULE_DEVICE_TABLE(spi, arizona_spi_ids);

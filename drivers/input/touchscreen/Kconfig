@@ -150,19 +150,6 @@ config TOUCHSCREEN_CY8CTMG110
 	  To compile this driver as a module, choose M here: the
 	  module will be called cy8ctmg110_ts.
 
-config TOUCHSCREEN_CYPRESS_CYTTSP4
-	tristate "Cypress TMA463 touchscreen"
-	depends on I2C
-	help
-	  Say Y here if you have a Cypress TMA463  touchscreen.
-
-	  If unsure, say N.
-
-	  To compile this driver as a module, choose M here: the
-	  module will be called cyttsp4.
-
-source "drivers/input/touchscreen/cypress/Kconfig"
-
 config TOUCHSCREEN_CYTTSP_CORE
 	tristate "Cypress TTSP touchscreen"
 	help
@@ -274,26 +261,6 @@ config TOUCHSCREEN_FUJITSU
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called fujitsu-ts.
-
-config TOUCHSCREEN_GSL1688E
-	tristate "SLIEAD GSL1688E I2C Touchscreen support (ARM)"
-	depends on I2C
-	help
-	  Say Y here if you have an EDT "Polytouch" touchscreen based
-	  on the SLIEAD GSL1688E family of controllers connected to
-	  your system.
-
-	  If unsure, say N.
-
-config TOUCHSCREEN_GSL1688E_ARM64
-	tristate "SLIEAD GSL1688E I2C Touchscreen support (ARM64)"
-	depends on I2C
-	help
-	  Say Y here if you have an EDT "Polytouch" touchscreen based
-	  on the SLIEAD GSL1688E family of controllers connected to
-	  your system.
-
-	  If unsure, say N.
 
 config TOUCHSCREEN_ILI210X
 	tristate "Ilitek ILI210X based touchscreen"
@@ -415,24 +382,6 @@ config TOUCHSCREEN_MMS114
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called mms114.
-
-config TOUCHSCREEN_MSG2XXX
-	bool "Mstar msg2xxx touchpanel"
-	depends on I2C
-	help
-	 Say Y here if you have a Mstar MSG2XXX touchscreen.
-	 MSG2XXX controllers are multi touch controllers which can
-	 report 2 or 5 touches at a time.
-
-	 If unsure, say N.
-
-config TOUCHSCREEN_PROXIMITY_SENSOR
-	tristate "Touchscreen proximity support"
-	depends on TOUCHSCREEN_MSG2XXX
-	default n
-	help
-	 Select for proximity sensor support in Mstar MSG2XXX touchscreen
-	 driver.
 
 config TOUCHSCREEN_MTOUCH
 	tristate "MicroTouch serial touchscreens"
@@ -1061,6 +1010,26 @@ config SECURE_TOUCH
 
 	  If unsure, say N.
 
+config TOUCHSCREEN_GSL1688E
+	tristate "SLIEAD GSL1688E I2C Touchscreen support (ARM)"
+	depends on I2C
+	help
+	  Say Y here if you have an EDT "Polytouch" touchscreen based
+	  on the SLIEAD GSL1688E family of controllers connected to
+	  your system.
+
+	  If unsure, say N.
+
+config TOUCHSCREEN_GSL1688E_ARM64
+	tristate "SLIEAD GSL1688E I2C Touchscreen support (ARM64)"
+	depends on I2C
+	help
+	  Say Y here if you have an EDT "Polytouch" touchscreen based
+	  on the SLIEAD GSL1688E family of controllers connected to
+	  your system.
+
+	  If unsure, say N.
+
 config TOUCHSCREEN_GT9XX
 	bool "Goodix touchpanel GT9xx series"
 	depends on I2C
@@ -1107,9 +1076,49 @@ config TOUCHSCREEN_YL_GT9XX
 
 	  If unsure, say N.
 
+config TOUCHSCREEN_YL_GT9XX_COVER_WINDOW_SIZE
+	bool "Touchscreen cover window size"
+	depends on TOUCHSCREEN_YL_GT9XX
+	help
+	  Say Y here if you want to set a size for cover window.
+	  This is used for the IC that cann't support window mode in firmware.
+	  So you can set a window size in your driver.
+
+	  If unsure, say N.
+
+config TOUCHSCREEN_YL_GT9XX_COVER_WINDOW_CFG
+	bool "Touchscreen cover window config switch"
+	depends on TOUCHSCREEN_YL_GT9XX
+	help
+	  Say Y here if you want to set conver window mode via switching a config file.
+	  This is used for the IC(goodix) that can support window mode in firmware.
+	  So you can set a window mode via a config.
+
+	  If unsure, say N.
+
+config TOUCHSCREEN_YL_GT9XX_TW_GLOVE_SWITCH
+	bool "Touchscreen glove window switch"
+	depends on TOUCHSCREEN_YL_GT9XX
+	help
+	  Say Y here if you want to set conver window mode.
+	  This is used for the IC(syna) that cannt't support window mode in firmware.
+	  So you can set a window mode in your driver.
+
+	  If unsure, say N.
+
+config TOUCHSCREEN_YL_SYNAPTICS
+	tristate "Synaptics DSX I2C touchscreen (YL variant)"
+	depends on I2C
+	help
+	  Say Y here if you have a Synaptics DSX I2C touchscreen (YL variant)
+	  connected to your system.
+
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called synaptics_i2c_rmi4.
+
 source "drivers/input/touchscreen/gt9xx/Kconfig"
-source "drivers/input/touchscreen/gt9xx_wt/Kconfig"
-source "drivers/input/touchscreen/gt9xx_yl/Kconfig"
 
 config TOUCHSCREEN_BU21150
 	tristate "JDI AFE BU21150"

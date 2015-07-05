@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2010-2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -48,7 +48,6 @@
 #ifdef CONFIG_CPU_FREQ_GOV_ELEMENTALX
 int graphics_boost = 4;
 #endif
-
 /* Number of jiffies for a full thermal cycle */
 #define TH_HZ			20
 
@@ -265,6 +264,7 @@ void kgsl_pwrctrl_pwrlevel_change(struct kgsl_device *device,
 	clk_set_rate(pwr->grp_clks[0], pwrlevel->gpu_freq);
 	trace_kgsl_pwrlevel(device, pwr->active_pwrlevel,
 			pwrlevel->gpu_freq);
+
 #ifdef CONFIG_CPU_FREQ_GOV_ELEMENTALX
        graphics_boost = pwr->active_pwrlevel;
 #endif
@@ -1729,8 +1729,7 @@ int _suspend(struct kgsl_device *device)
 {
 	int ret = 0;
 
-	if ((KGSL_STATE_SUSPEND == device->state) ||
-		(KGSL_STATE_NONE == device->state))
+	if (KGSL_STATE_SUSPEND == device->state)
 		return ret;
 
 	/* drain to prevent from more commands being submitted */

@@ -154,7 +154,7 @@ static int tps65132_regulator_enable(struct regulator_dev *rdev)
 static int tps65132_regulator_get_voltage(struct regulator_dev *rdev)
 {
 	struct tps65132_regulator *vreg = rdev_get_drvdata(rdev);
-	#ifndef CONFIG_MACH_T86519A1
+#ifndef CONFIG_MACH_T86519A1
 	int rc, val;
 
 	if (!rdev->regmap) {

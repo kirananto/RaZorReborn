@@ -1516,7 +1516,6 @@ static int akm_compass_resume(struct device *dev)
 	int ret = 0;
 	uint8_t mode;
 
-
 #ifndef CONFIG_MACH_T86519A1
 	ret = pinctrl_select_state(akm->pinctrl, akm->pin_default);
 	if (ret)
@@ -1759,6 +1758,7 @@ static int akm_compass_parse_dt(struct device *dev,
 	return -EINVAL;
 }
 #endif /* !CONFIG_OF */
+
 #ifndef CONFIG_MACH_T86519A1
 static int akm_pinctrl_init(struct akm_compass_data *akm)
 {
@@ -1785,6 +1785,7 @@ static int akm_pinctrl_init(struct akm_compass_data *akm)
 	return 0;
 }
 #endif
+
 static int akm_report_data(struct akm_compass_data *akm)
 {
 	uint8_t dat_buf[AKM_SENSOR_DATA_SIZE];/* for GET_DATA */
@@ -1998,6 +1999,7 @@ int akm_compass_probe(struct i2c_client *client, const struct i2c_device_id *id)
 		}
 	}
 #endif
+
 	/* Pull up the reset pin */
 	AKECS_Reset(s_akm, 1);
 

@@ -105,6 +105,7 @@ config ARCH_MSM8909
 	select CPU_FREQ_MSM
 	select CPU_FREQ
 	select PM_DEVFREQ
+	select PM_OPP
 	select MSM_DEVFREQ_DEVBW
 	select DEVFREQ_SIMPLE_DEV
 	select DEVFREQ_GOV_MSM_BW_HWMON
@@ -970,14 +971,6 @@ config MSM_L2_ERP_2BIT_PANIC
 
 	  For production builds, it may be acceptable to say 'N' here, since
 	  an uncorrectable error might not necessarily cause further problems.
-
-config MSM_HOTPLUG
-	bool "MSM hotplug driver"
-	depends on HOTPLUG_CPU
-	default n
-	help
-	  The MSM hotplug driver controls on-/offlining of additional cores based
-	  on current cpu load.
 
 config MSM_CPR
 	tristate "Use MSM CPR in S/W mode"

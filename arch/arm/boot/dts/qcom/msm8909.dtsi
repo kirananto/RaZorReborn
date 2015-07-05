@@ -19,6 +19,10 @@
 	qcom,msm-id = <245 0>;
 	interrupt-parent = <&intc>;
 
+	chosen {
+		bootargs = "sched_enable_hmp=1";
+	};
+
 	aliases {
 		/* smdtty devices */
 		smd1 = &smdtty_apps_fm;
@@ -109,6 +113,13 @@
 			linux,reserve-contiguous-region;
 			reg = <0 0 0 0x314000>;
 			label = "audio_mem";
+		};
+
+                cont_splash_mem: splash_region@83000000 {
+			linux,reserve-contiguous-region;
+			linux,reserve-region;
+			reg = <0x0 0x83000000 0x0 0x900000>;
+			label = "cont_splash_mem";
 		};
 	};
 
@@ -257,6 +268,7 @@
 		reg-names = "rcg-base", "efuse";
 		qcom,safe-freq = < 400000000 >;
 		cpu-vdd-supply = <&pm8909_s1_corner_ao>;
+		qcom,enable-opp;
 		clocks = <&clock_gcc clk_gpll0_ao_clk_src>,
 			 <&clock_gcc clk_a7sspll>;
 		clock-names = "clk-4", "clk-5";
@@ -769,7 +781,7 @@
 		compatible = "qcom,android-usb";
 		reg = <0x086000c8 0xc8>;
 		qcom,pm-qos-latency = <2 1001 12701>;
-		qcom,streaming-func = "rndis","mtp";
+		qcom,streaming-func = "mtp";
 	};
 
 	qcom,usbbam@78c4000 {
@@ -1021,7 +1033,7 @@
                 interrupt-names = "spi_irq", "spi_bam_irq";
                 interrupts = <0 100 0>, <0 238 0>;
                 spi-max-frequency = <19200000>;
-                pinctrl-names = "default", "sleep";
+                pinctrl-names = "spi_default", "spi_sleep";
                 pinctrl-0 = <&spi0_default &spi0_cs0_active>;
                 pinctrl-1 = <&spi0_sleep &spi0_cs0_sleep>;
                 clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
@@ -1183,7 +1195,7 @@
 		qcom,scm_core_clk_src-freq = <80000000>;
 
 		qcom,pas-id = <9>;
-		qcom,proxy-timeout-ms = <100>;
+		qcom,proxy-timeout-ms = <5000>;
 		qcom,firmware-name = "venus";
 		linux,contiguous-region = <&venus_qseecom_mem>;
 	};
@@ -1195,6 +1207,16 @@
 
 	routing: qcom,msm-pcm-routing {
 		compatible = "qcom,msm-pcm-routing";
+	};
+
+	qcom,memshare {
+		compatible = "qcom,memshare";
+
+		qcom,client_1 {
+			compatible = "qcom,memshare-peripheral";
+			qcom,peripheral-size = <2097152>;
+			label = "modem";
+		};
 	};
 
 	pcm1: qcom,msm-pcm-low-latency {

@@ -1334,7 +1334,6 @@ static void hfi_process_sys_get_prop_image_version(
 }
 
 static void hfi_process_sys_property_info(
-		msm_vidc_callback callback, u32 device_id,
 		struct hfi_msg_sys_property_info_packet *pkt)
 {
 	if (!pkt) {
@@ -1375,8 +1374,7 @@ u32 hfi_process_msg_packet(msm_vidc_callback callback, u32 device_id,
 	session_pkt_func_def session_pkt_func = NULL;
 	sys_pkt_func_def sys_pkt_func = NULL;
 
-	if (!callback || !session_lock || !msg_hdr ||
-		msg_hdr->size < VIDC_IFACEQ_MIN_PKT_SIZE) {
+	if (!callback || !msg_hdr || msg_hdr->size < VIDC_IFACEQ_MIN_PKT_SIZE) {
 		dprintk(VIDC_ERR, "%s: bad packet/packet size\n",
 			__func__);
 		rc = -EINVAL;
@@ -1463,17 +1461,19 @@ u32 hfi_process_msg_packet(msm_vidc_callback callback, u32 device_id,
 		dprintk(VIDC_DBG, "UNKNOWN_MSG_TYPE : %d\n", msg_hdr->packet);
 		break;
 	}
-	mutex_lock(session_lock);
-	if (session_pkt_func) {
+
+	if (session_pkt_func && session_lock) {
 		struct vidc_hal_session_cmd_pkt *pkt =
 			(struct vidc_hal_session_cmd_pkt *)msg_hdr;
+		mutex_lock(session_lock);
 		session = hfi_process_get_session(sessions, pkt->session_id);
+		mutex_unlock(session_lock);
 		/* Event of type HFI_EVENT_SYS_ERROR will not have any session
 		 * associated with it */
 		if (!session && (msg_hdr->packet != HFI_MSG_EVENT_NOTIFY)) {
 			dprintk(VIDC_ERR, "%s Got invalid session id: %d\n",
 					__func__, pkt->session_id);
-			goto invalid_session;
+			return rc;
 		}
 	}
 
@@ -1482,7 +1482,5 @@ u32 hfi_process_msg_packet(msm_vidc_callback callback, u32 device_id,
 	if (sys_pkt_func)
 		sys_pkt_func(callback, device_id, msg_hdr);
 
-invalid_session:
-	mutex_unlock(session_lock);
 	return rc;
 }

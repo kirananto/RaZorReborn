@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2014, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -125,8 +125,7 @@
 
 	restart@4ab000 {
 		compatible = "qcom,pshold";
-		reg = <0x4ab000 0x4>,
-		      <0x193d100 0x4>;
+		reg = <0x4ab000 0x4>;
 	};
 
 	timer@b120000 {
@@ -515,7 +514,7 @@
 		qcom,poll-ms = <250>;
 		qcom,limit-temp = <85>;
 		qcom,temp-hysteresis = <5>;
-		qcom,freq-step = <2>;
+		qcom,freq-step = <1>;
 		qcom,freq-control-mask = <0xff>;
 		qcom,core-limit-temp = <95>;
 		qcom,core-temp-hysteresis = <5>;
@@ -560,7 +559,7 @@
 		compatible = "qcom,memshare";
 
 		qcom,client_1 {
-			compatible = "memshare,peripheral";
+			compatible = "qcom,memshare-peripheral";
 			qcom,peripheral-size = <2097152>;
 			label = "modem";
 		};
@@ -822,7 +821,7 @@
 		compatible = "qcom,android-usb";
 		reg = <0x086000c8 0xc8>;
 		qcom,pm-qos-latency = <2 1001 12701>;
-		qcom,streaming-func = "rndis","mtp";
+		qcom,streaming-func = "mtp";
 		qcom,android-usb-uicc-nluns = /bits/ 8 <1>;
 	};
 
@@ -917,7 +916,7 @@
 		interrupt-names = "spi_irq", "spi_bam_irq";
 		interrupts = <0 97 0>, <0 238 0>;
 		spi-max-frequency = <19200000>;
-		pinctrl-names = "default", "sleep";
+		pinctrl-names = "spi_default", "spi_sleep";
 		pinctrl-0 = <&spi0_default &spi0_cs0_active>;
 		pinctrl-1 = <&spi0_sleep &spi0_cs0_sleep>;
 		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
@@ -993,7 +992,7 @@
 		interrupts = <0 99 0>, <0 238 0>;
 		spi-max-frequency = <18000000>;
 		qcom,use-pinctrl;
-		pinctrl-names = "default", "sleep";
+		pinctrl-names = "spi_default", "spi_sleep";
 		pinctrl-0 = <&spi5_default &spi5_cs0_active>;
 		pinctrl-1 = <&spi5_sleep &spi5_cs0_sleep>;
 		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
@@ -1202,7 +1201,7 @@
 		qcom,scm_core_clk_src = <80000000>;
 
 		qcom,pas-id = <9>;
-		qcom,proxy-timeout-ms = <100>;
+		qcom,proxy-timeout-ms = <5000>;
 		qcom,firmware-name = "venus";
 		linux,contiguous-region = <&venus_mem>;
 	};
@@ -1454,20 +1453,6 @@
 	hostless: qcom,msm-pcm-hostless {
 		compatible = "qcom,msm-pcm-hostless";
 	};
-
-	dai_pri_auxpcm: qcom,msm-pri-auxpcm {
-		compatible = "qcom,msm-auxpcm-dev";
-		qcom,msm-cpudai-auxpcm-mode = <0>, <0>;
-		qcom,msm-cpudai-auxpcm-sync = <1>, <1>;
-		qcom,msm-cpudai-auxpcm-frame = <5>, <4>;
-		qcom,msm-cpudai-auxpcm-quant = <2>, <2>;
-		qcom,msm-cpudai-auxpcm-num-slots = <1>, <1>;
-		qcom,msm-cpudai-auxpcm-slot-mapping = <1>, <1>;
-		qcom,msm-cpudai-auxpcm-data = <0>, <0>;
-		qcom,msm-cpudai-auxpcm-pcm-clk-rate = <2048000>, <2048000>;
-		qcom,msm-auxpcm-interface = "primary";
-	};
-
 	qcom,vidc@1d00000 {
 		compatible = "qcom,msm-vidc";
 		reg = <0x01d00000 0xff000>;
@@ -1483,6 +1468,7 @@
 		clock-names = "core_clk", "core0_clk", "core1_clk", "iface_clk", "bus_clk";
 		qcom,clock-configs = <0x1 0x0 0x0 0x0 0x0>;
 		qcom,sw-power-collapse;
+		qcom,enable-minimum-voting;
 		qcom,load-freq-tbl =
 			<489600 266670000 0x0c000000>, /* HEVC  decoder 1080p 60fps  */
 			<489600 266670000 0x030fcfff>, /* Legacy decoder 1080p 60fps  */
@@ -1569,16 +1555,6 @@
 					<63 512 1306624 2291405>;
 				qcom,bus-configs = <0x0c000000>;
 			};
-			qcom,msm-bus-client@3 {
-				qcom,msm-bus,name = "venus-arm9-ddr";
-				qcom,msm-bus,num-cases = <2>;
-				qcom,msm-bus,num-paths = <1>;
-				qcom,msm-bus,vectors-KBps =
-					<63 512 0 0>,
-					<63 512 1000 1000>;
-				qcom,bus-configs = <0x00000000>;
-				qcom,bus-passive;
-			};
 		};
 	};
 
@@ -1626,19 +1602,6 @@
 			<0x07706010 0x4>;
 		reg-names = "avtimer_lsb_addr", "avtimer_msb_addr";
 		qcom,clk_div = <27>;
-	};
-
-	mcd {
-		compatible = "qcom,mcd";
-		qcom,ce-hw-instance = <0>;
-		qcom,ce-device = <0>;
-		clocks = <&clock_gcc clk_crypto_clk_src>,
-			 <&clock_gcc clk_gcc_crypto_clk>,
-			 <&clock_gcc clk_gcc_crypto_ahb_clk>,
-			 <&clock_gcc clk_gcc_crypto_axi_clk>;
-		clock-names = "core_clk_src", "core_clk",
-				"iface_clk", "bus_clk";
-		qcom,ce-opp-freq = <100000000>;
 	};
 };
 

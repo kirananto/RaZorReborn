@@ -1646,7 +1646,6 @@ static const struct reg_default florida_reg_default[] = {
 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
-	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
@@ -1660,7 +1659,6 @@ static const struct reg_default florida_reg_default[] = {
 	{ 0x00000F01, 0x0000 },    /* R3841  - ANC_SRC */
 	{ 0x00000F08, 0x001c },    /* R3848  - ANC Coefficient */
 	{ 0x00000F09, 0x0000 },    /* R3849  - ANC Coefficient */
-	{ 0x00000F0A, 0x0000 },    /* R3850  - ANC Coefficient */
 	{ 0x00000F0B, 0x0000 },    /* R3851  - ANC Coefficient */
 	{ 0x00000F0C, 0x0000 },    /* R3852  - ANC Coefficient */
 	{ 0x00000F0D, 0x0000 },    /* R3853  - ANC Coefficient */
@@ -2916,7 +2914,6 @@ static bool florida_readable_register(struct device *dev, unsigned int reg)
 	case ARIZONA_ASRC_ENABLE:
 	case ARIZONA_ASRC_STATUS:
 	case ARIZONA_ASRC_RATE1:
-	case ARIZONA_ASRC_RATE2:
 	case ARIZONA_ISRC_1_CTRL_1:
 	case ARIZONA_ISRC_1_CTRL_2:
 	case ARIZONA_ISRC_1_CTRL_3:

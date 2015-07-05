@@ -40,7 +40,6 @@
 #include <linux/dma-contiguous.h>
 #include <linux/dma-removed.h>
 #include <trace/events/kmem.h>
-#include <linux/delay.h>
 
 struct cma {
 	unsigned long	base_pfn;
@@ -596,7 +595,6 @@ unsigned long dma_alloc_from_contiguous(struct device *dev, int count,
 	struct cma *cma = dev_get_cma_area(dev);
 	int ret = 0;
 	int tries = 0;
-	int retry_after_sleep = 0;
 
 	if (!cma || !cma->count)
 		return 0;
@@ -618,27 +616,9 @@ unsigned long dma_alloc_from_contiguous(struct device *dev, int count,
 		pageno = bitmap_find_next_zero_area(cma->bitmap, cma->count,
 						    start, count, mask);
 		if (pageno >= cma->count) {
-			if (retry_after_sleep < 2) {
-				pfn = 0;
-				start = 0;
-				pr_debug("%s: Memory range busy,"
-					"retry after sleep\n", __func__);
-				/*
-				* Page may be momentarily pinned by some other
-				* process which has been scheduled out, eg.
-				* in exit path or during unmap call,and so
-				* cannot be  freed there. Sleep for 100ms and
-				* retry twice to see if it has been freed later.
-				*/
-				msleep(100);
-				retry_after_sleep++;
-				mutex_unlock(&cma->lock);
-				continue;
-			} else {
-				pfn = 0;
-				mutex_unlock(&cma->lock);
-				break;
-			}
+			pfn = 0;
+			mutex_unlock(&cma->lock);
+			break;
 		}
 		bitmap_set(cma->bitmap, pageno, count);
 		/*
