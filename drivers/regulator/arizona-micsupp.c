@@ -102,17 +102,13 @@ static void arizona_micsupp_check_cp(struct work_struct *work)
 	}
 
 	if (dapm) {
-		mutex_lock_nested(&dapm->card->dapm_mutex,
-				  SND_SOC_DAPM_CLASS_RUNTIME);
+		mutex_lock(&dapm->card->dapm_mutex);
 
 		if ((reg & (ARIZONA_CPMIC_ENA | ARIZONA_CPMIC_BYPASS)) ==
-		    ARIZONA_CPMIC_ENA) {
+		    ARIZONA_CPMIC_ENA)
 			snd_soc_dapm_force_enable_pin(dapm, "MICSUPP");
-			arizona->micvdd_regulated = true;
-		} else {
+		else
 			snd_soc_dapm_disable_pin(dapm, "MICSUPP");
-			arizona->micvdd_regulated = false;
-		}
 
 		mutex_unlock(&dapm->card->dapm_mutex);
 
@@ -322,15 +318,14 @@ static int arizona_micsupp_probe(struct platform_device *pdev)
 			   ARIZONA_CPMIC_BYPASS, 0);
 
 	micsupp->regulator = regulator_register(desc, &config);
-
-	of_node_put(config.of_node);
-
 	if (IS_ERR(micsupp->regulator)) {
 		ret = PTR_ERR(micsupp->regulator);
 		dev_err(arizona->dev, "Failed to register mic supply: %d\n",
 			ret);
 		return ret;
 	}
+
+	of_node_put(config.of_node);
 
 	platform_set_drvdata(pdev, micsupp);
 
