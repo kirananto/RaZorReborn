@@ -31,7 +31,7 @@ export SUBARCH=arm64
 export KBUILD_BUILD_USER="Kiran.Anto"
 export KBUILD_BUILD_HOST="RaZor-Machine"
 STRIP="/home/kiran/android/toolchains/aarch64-linux-android-6.0/bin/aarch64-linux-android-strip"
-MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Tomato
+MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Common
 
 compile_kernel ()
 {
@@ -40,7 +40,8 @@ echo "                    "
 echo "                                        Compiling RaZorReborn kernel                    "
 echo "                    "
 echo -e "**********************************************************************************************"
-make cyanogenmod_tomato-64_defconfig
+make cyanogenmod_lettuce-64_defconfig
+make menuconfig
 make -j4
 $DTBTOOL -2 -o $KERNEL_DIR/arch/arm64/boot/dt.img -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm64/boot/dts/
 if ! [ -a $KERN_IMG ];
@@ -48,21 +49,7 @@ then
 echo -e "$red Kernel Compilation failed! Fix the errors! $nocol"
 exit 1
 fi
-strip_modules
 }
-
-strip_modules ()
-{
-echo "Copying modules"
-rm $MODULES_DIR/*
-find . -name '*.ko' -exec cp {} $MODULES_DIR/ \;
-cd $MODULES_DIR
-echo "Stripping modules for size"
-$STRIP --strip-unneeded *.ko
-zip -9 modules *
-cd $KERNEL_DIR
-}
-
 case $1 in
 clean)
 make ARCH=arm64 -j8 clean mrproper
@@ -72,10 +59,8 @@ rm -rf $KERNEL_DIR/arch/arm/boot/dt.img
 compile_kernel
 ;;
 esac
-cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../tools
-mv $MODULES_DIR/../tools/Image $MODULES_DIR/../tools/zImage
-cp $MODULES_DIR/wlan.ko $MODULES_DIR/../system/lib/modules/
+cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../LettuceOutput/tools
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
-echo "Enjoy RazorKernel"
+echo "Enjoy RazorKernel for Lettuce"
