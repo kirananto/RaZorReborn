@@ -248,6 +248,7 @@
 	.private_value = (unsigned long)&xenum }
 #define SOC_VALUE_ENUM_EXT(xname, xenum, xhandler_get, xhandler_put) \
 	SOC_ENUM_EXT(xname, xenum, xhandler_get, xhandler_put)
+
 #define SND_SOC_BYTES(xname, xbase, xregs)		      \
 {	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname,   \
 	.info = snd_soc_bytes_info, .get = snd_soc_bytes_get, \
@@ -262,6 +263,7 @@
 		((unsigned long)&(struct soc_bytes)           \
 		{.base = xbase, .num_regs = xregs,	      \
 		 .mask = xmask }) }
+
 #define SND_SOC_BYTES_EXT(xname, xcount, xhandler_get, xhandler_put) \
 {	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, \
 	.info = snd_soc_bytes_info_ext, \
@@ -1145,6 +1147,7 @@ struct soc_bytes {
 	int num_regs;
 	u32 mask;
 };
+
 struct soc_bytes_ext {
 	int max;
 };

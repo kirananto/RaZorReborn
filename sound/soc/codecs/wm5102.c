@@ -725,7 +725,7 @@ static int wm5102_out_comp_switch_put(struct snd_kcontrol *kcontrol,
 	return 0;
 }
 
-static const char *wm5102_osr_text[] = {
+static const char * const wm5102_osr_text[] = {
 	"Low power", "Normal", "High performance",
 };
 
@@ -877,6 +877,8 @@ SOC_VALUE_ENUM("FX Rate", arizona_fx_rate),
 
 SOC_VALUE_ENUM("ISRC1 FSL", arizona_isrc_fsl[0]),
 SOC_VALUE_ENUM("ISRC2 FSL", arizona_isrc_fsl[1]),
+SOC_VALUE_ENUM("ASRC RATE 1", arizona_asrc_rate1),
+SOC_VALUE_ENUM("ASRC RATE 2", arizona_asrc_rate2),
 
 ARIZONA_MIXER_CONTROLS("Mic", ARIZONA_MICMIX_INPUT_1_SOURCE),
 ARIZONA_MIXER_CONTROLS("Noise", ARIZONA_NOISEMIX_INPUT_1_SOURCE),
@@ -1083,7 +1085,7 @@ static const SOC_ENUM_SINGLE_DECL(wm5102_dsp_output_enum, 0, 0, wm5102_dsp_outpu
 static const struct snd_kcontrol_new wm5102_dsp_output_mux =
 	SOC_DAPM_ENUM_VIRT("DSP Virtual Output Mux", wm5102_dsp_output_enum);
 
-static const char *wm5102_aec_loopback_texts[] = {
+static const char * const wm5102_aec_loopback_texts[] = {
 	"HPOUT1L", "HPOUT1R", "HPOUT2L", "HPOUT2R", "EPOUT",
 	"SPKOUTL", "SPKOUTR", "SPKDAT1L", "SPKDAT1R",
 };

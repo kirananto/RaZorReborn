@@ -145,7 +145,8 @@ static int snd_compr_free(struct inode *inode, struct file *f)
 	case SNDRV_PCM_STATE_RUNNING:
 	case SNDRV_PCM_STATE_DRAINING:
 	case SNDRV_PCM_STATE_PAUSED:
-		data->stream.ops->trigger(&data->stream, SNDRV_PCM_TRIGGER_STOP);
+		data->stream.ops->trigger(&data->stream,
+					SNDRV_PCM_TRIGGER_STOP);
 		break;
 	default:
 		break;

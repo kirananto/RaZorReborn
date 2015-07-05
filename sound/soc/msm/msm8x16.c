@@ -33,14 +33,14 @@
 #include "../codecs/msm8x16-wcd.h"
 #include "../codecs/wcd9306.h"
 #ifdef CONFIG_MACH_T86519A1
-#include "../codecs/wm8998.h"
+#include "../codecs/vegas.h"
 #endif
 #define DRV_NAME "msm8x16-asoc-wcd"
 
 #ifdef CONFIG_MACH_T86519A1
-#define MSM_WM8998_FLL_CLK_SOURCE ARIZONA_FLL_SRC_MCLK1
-#define MSM_WM8998_FLL_CLK_FREQ ( 48000 * 512 * 2 )
-#define MSM_WM8998_SYS_CLK_FREQ ( 48000 * 512 * 2 )
+#define MSM_VEGAS_FLL_CLK_SOURCE ARIZONA_FLL_SRC_MCLK1
+#define MSM_VEGAS_FLL_CLK_FREQ ( 48000 * 512 * 2 )
+#define MSM_VEGAS_SYS_CLK_FREQ ( 48000 * 512 * 2 )
 static struct snd_soc_codec *wm8998;
 static int previous_bias_level = SND_SOC_BIAS_OFF;
 #endif
@@ -76,9 +76,7 @@ static int msm_ter_mi2s_tx_ch = 1;
 static int msm_pri_mi2s_rx_ch = 1;
 
 static int msm_proxy_rx_ch = 2;
-#ifndef CONFIG_MACH_CP8675
 static int msm8909_auxpcm_rate = 8000;
-#endif
 
 static atomic_t quat_mi2s_clk_ref;
 static atomic_t auxpcm_mi2s_clk_ref;
@@ -301,7 +299,6 @@ static const char *const loopback_mclk_text[] = {"DISABLE", "ENABLE"};
 static const char *const quatmi2s_clk_text[] = {"DISABLE", "ENABLE"};
 #endif
 
-#ifndef CONFIG_MACH_CP8675
 static int msm_auxpcm_be_params_fixup(struct snd_soc_pcm_runtime *rtd,
 					struct snd_pcm_hw_params *params)
 {
@@ -316,7 +313,6 @@ static int msm_auxpcm_be_params_fixup(struct snd_soc_pcm_runtime *rtd,
 
 	return 0;
 }
-#endif
 
 static int enable_spk_ext_pa(struct snd_soc_codec *codec, int enable)
 {
@@ -1169,7 +1165,6 @@ static int conf_int_codec_mux_sec(struct msm8916_asoc_mach_data *pdata)
 	return 0;
 }
 
-#ifndef CONFIG_MACH_CP8675
 static int msm_prim_auxpcm_startup(struct snd_pcm_substream *substream)
 {
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
@@ -1229,7 +1224,6 @@ static void msm_prim_auxpcm_shutdown(struct snd_pcm_substream *substream)
 				__func__);
 	}
 }
-#endif
 
 static int msm_sec_mi2s_snd_startup(struct snd_pcm_substream *substream)
 {
@@ -1695,12 +1689,10 @@ static struct snd_soc_ops msm8x16_mi2s_be_ops = {
 	.shutdown = msm_mi2s_snd_shutdown,
 };
 
-#ifndef CONFIG_MACH_CP8675
 static struct snd_soc_ops msm_pri_auxpcm_be_ops = {
 	.startup = msm_prim_auxpcm_startup,
 	.shutdown = msm_prim_auxpcm_shutdown,
 };
-#endif
 
 #ifdef CONFIG_MACH_T86519A1
 static int wm8998_snd_startup_clk(void)
@@ -1712,21 +1704,21 @@ static int wm8998_snd_startup_clk(void)
 		pr_err("failed to enable mclk\n");
 		return ret;
 	}
-	snd_soc_codec_set_pll(wm8998, WM8998_FLL1_REFCLK,
+	snd_soc_codec_set_pll(wm8998, VEGAS_FLL1_REFCLK,
 					 ARIZONA_FLL_SRC_NONE,
 					 0, 0);
-	snd_soc_codec_set_pll(wm8998, WM8998_FLL1,
+	snd_soc_codec_set_pll(wm8998, VEGAS_FLL1,
 				ARIZONA_FLL_SRC_NONE, 0, 0);
 
 	pr_debug("arizona  %s->%d\n", __FUNCTION__, __LINE__);
-	ret = snd_soc_codec_set_pll(wm8998, WM8998_FLL1,
-			MSM_WM8998_FLL_CLK_SOURCE,
-			19200000, MSM_WM8998_FLL_CLK_FREQ);
+	ret = snd_soc_codec_set_pll(wm8998, VEGAS_FLL1,
+			MSM_VEGAS_FLL_CLK_SOURCE,
+			19200000, MSM_VEGAS_FLL_CLK_FREQ);
 
 	pr_debug("arizona wm8998_snd_startup Start to set SYSCLK\n");
 	ret = snd_soc_codec_set_sysclk( wm8998, ARIZONA_CLK_SYSCLK,
 			ARIZONA_CLK_SRC_FLL1,
-			MSM_WM8998_SYS_CLK_FREQ,
+			MSM_VEGAS_SYS_CLK_FREQ,
 			SND_SOC_CLOCK_IN);
 
 	if (ret != 0) {
@@ -1734,8 +1726,8 @@ static int wm8998_snd_startup_clk(void)
 		return ret;
 	}
 	ret = snd_soc_codec_set_sysclk( wm8998, ARIZONA_CLK_OPCLK,
-					MSM_WM8998_FLL_CLK_SOURCE,
-					MSM_WM8998_SYS_CLK_FREQ,
+					MSM_VEGAS_FLL_CLK_SOURCE,
+					MSM_VEGAS_SYS_CLK_FREQ,
 					SND_SOC_CLOCK_OUT);
 	if (ret != 0) {
 		pr_err("arizona Failed to start OPCLK  %d\n", ret);
@@ -1749,10 +1741,10 @@ static int wm8998_snd_shutdown_clk(void)
 {
 	int ret = 0;
 
-	snd_soc_codec_set_pll(wm8998, WM8998_FLL1_REFCLK,
+	snd_soc_codec_set_pll(wm8998, VEGAS_FLL1_REFCLK,
 		ARIZONA_FLL_SRC_NONE, 0, 0);
 
-	snd_soc_codec_set_pll(wm8998, WM8998_FLL1,
+	snd_soc_codec_set_pll(wm8998, VEGAS_FLL1,
 		ARIZONA_FLL_SRC_NONE, 0, 0);
 
 	ret = msm8x16_enable_codec_ext_clk_wm8998(wm8998, 0, true);
@@ -1845,7 +1837,7 @@ static int wm8998_init(struct snd_soc_pcm_runtime *rtd)
 	 * If we set the fll_ref as none, the driver then tries to refer
 	 * to the fll_sync setting and use it for fll_ref
 	 */
-	snd_soc_codec_set_pll(wm8998, WM8998_FLL1_REFCLK,
+	snd_soc_codec_set_pll(wm8998, VEGAS_FLL1_REFCLK,
 				ARIZONA_FLL_SRC_NONE,
 				0, 0);
 
@@ -1937,6 +1929,7 @@ static struct snd_soc_dai_link msm8x16_dai[] = {
 		.cpu_dai_name	= "MultiMedia1",
 		.platform_name  = "msm-pcm-dsp.0",
 		.dynamic = 1,
+		.async_ops = ASYNC_DPCM_SND_SOC_PREPARE,
 		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
 			SND_SOC_DPCM_TRIGGER_POST},
 		.codec_dai_name = "snd-soc-dummy-dai",
@@ -2108,6 +2101,7 @@ static struct snd_soc_dai_link msm8x16_dai[] = {
 		.cpu_dai_name   = "MultiMedia5",
 		.platform_name  = "msm-pcm-dsp.1",
 		.dynamic = 1,
+		.async_ops = ASYNC_DPCM_SND_SOC_PREPARE,
 		.codec_dai_name = "snd-soc-dummy-dai",
 		.codec_name = "snd-soc-dummy",
 		.trigger = {SND_SOC_DPCM_TRIGGER_POST,
@@ -2351,6 +2345,7 @@ static struct snd_soc_dai_link msm8x16_dai[] = {
 		.codec_name     = "tombak_codec",
 		.codec_dai_name = "msm8x16_wcd_i2s_tx1",
 		.no_pcm = 1,
+		.async_ops = ASYNC_DPCM_SND_SOC_PREPARE,
 		.be_id = MSM_BACKEND_DAI_TERTIARY_MI2S_TX,
 		.be_hw_params_fixup = msm_tx_be_hw_params_fixup,
 		.ops = &msm8x16_mi2s_be_ops,
@@ -2362,8 +2357,8 @@ static struct snd_soc_dai_link msm8x16_dai[] = {
 		.cpu_dai_name = "msm-dai-q6-mi2s.3",
 		.platform_name = "msm-pcm-routing",
 #ifdef CONFIG_MACH_T86519A1
-		.codec_name = "wm8998-codec",
-		.codec_dai_name = "wm8998-aif1",
+		.codec_name = "vegas-codec",
+		.codec_dai_name = "vegas-aif1",
 		.init = &wm8998_init,
 		.dai_fmt = SND_SOC_DAIFMT_I2S
 			| SND_SOC_DAIFMT_NB_NF
@@ -2393,7 +2388,6 @@ static struct snd_soc_dai_link msm8x16_dai[] = {
 		.ignore_suspend = 1,
 	},
 	/* Primary AUX PCM Backend DAI Links */
-#ifndef CONFIG_MACH_CP8675
 	{
 		.name = LPASS_BE_AUXPCM_RX,
 		.stream_name = "AUX PCM Playback",
@@ -2421,7 +2415,6 @@ static struct snd_soc_dai_link msm8x16_dai[] = {
 		.ops = &msm_pri_auxpcm_be_ops,
 		.ignore_suspend = 1,
 	},
-#endif
 	{
 		.name = LPASS_BE_INT_BT_SCO_RX,
 		.stream_name = "Internal BT-SCO Playback",
@@ -2757,6 +2750,20 @@ int get_cdc_gpio_lines(struct pinctrl *pinctrl, int ext_pa)
 			pr_err("failed to enable codec gpios\n");
 		break;
 	default:
+#ifdef CONFIG_MACH_CP8675
+		pinctrl_info.cdc_lines_dmic_sus = pinctrl_lookup_state(pinctrl,
+			"cdc_lines_dmic_sus");
+		if (IS_ERR(pinctrl_info.cdc_lines_dmic_sus)) {
+			pr_err("%s: Unable to get pinctrl cdc_lines_dmic_sus handle\n",
+								__func__);
+		}
+		pinctrl_info.cdc_lines_dmic_act = pinctrl_lookup_state(pinctrl,
+			"cdc_lines_dmic_act");
+		if (IS_ERR(pinctrl_info.cdc_lines_dmic_act)) {
+			pr_err("%s: Unable to get pinctrl cdc_lines_dmic_act handle\n",
+								__func__);
+		}
+#endif
 		pinctrl_info.cdc_lines_sus = pinctrl_lookup_state(pinctrl,
 			"cdc_lines_sus");
 		if (IS_ERR(pinctrl_info.cdc_lines_sus)) {
@@ -3079,22 +3086,7 @@ static int msm8x16_asoc_machine_probe(struct platform_device *pdev)
 					__func__, ret);
 			goto err;
 		}
-#ifdef CONFIG_MACH_CP8675
-	pinctrl_info.cdc_lines_dmic_sus = pinctrl_lookup_state(pinctrl,
-		"cdc_lines_dmic_sus");
-	if (IS_ERR(pinctrl_info.cdc_lines_dmic_sus)) {
-		pr_err("%s: Unable to get pinctrl cdc_lines_dmic_sus handle\n",
-							__func__);
 	}
-	pinctrl_info.cdc_lines_dmic_act = pinctrl_lookup_state(pinctrl,
-		"cdc_lines_dmic_act");
-	if (IS_ERR(pinctrl_info.cdc_lines_dmic_act)) {
-		pr_err("%s: Unable to get pinctrl cdc_lines_dmic_act handle\n",
-							__func__);
-	}
-#endif
-	}
-
 
 	ret = of_property_read_string(pdev->dev.of_node,
 		hs_micbias_type, &type);
