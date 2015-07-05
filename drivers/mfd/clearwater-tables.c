@@ -41,13 +41,14 @@ static const struct reg_default clearwater_reva_16_patch[] = {
 	{ 0x293, 0x0080 },
 	{ 0x17D, 0x0303 },
 	{ 0x19D, 0x0303 },
-	{ 0x27E, 0x0001 },
+	{ 0x27E, 0x0000 },
 	{ 0x80,  0x0000 },
 	{ 0x80,  0x0000 },
 };
 
-static const struct reg_default clearwater_revb_16_patch[] = {
-	{ 0x27E, 0x0001 },
+static const struct reg_default clearwater_revc_16_patch[] = {
+	{ 0x27E, 0x0000 },
+	{ 0x2C2, 0x5 },
 };
 
 /* this patch is required for EDRE on RevA*/
@@ -289,51 +290,70 @@ static const struct reg_default clearwater_reva_32_patch[] = {
 	{  0x31DC, 0x222AFB02},
 };
 
-int clearwater_patch_32(struct arizona *arizona)
-{
-	switch (arizona->rev) {
-	case 0:
-	case 1:
-		return regmap_multi_reg_write_bypassed(arizona->regmap_32bit,
-						 clearwater_reva_32_patch,
-						 ARRAY_SIZE(clearwater_reva_32_patch));
-	default:
-		return 0;
-	}
-}
-EXPORT_SYMBOL_GPL(clearwater_patch_32);
+static const struct reg_default clearwater_revc_32_patch[] = {
+	{ 0x3380, 0xE4103066 },
+	{ 0x3382, 0xE4103070 },
+	{ 0x3384, 0xE4103078 },
+	{ 0x3386, 0xE4103080 },
+	{ 0x3388, 0xE410F080 },
+	{ 0x338A, 0xE4143066 },
+	{ 0x338C, 0xE4143070 },
+	{ 0x338E, 0xE4143078 },
+	{ 0x3390, 0xE4143080 },
+	{ 0x3392, 0xE414F080 },
+	{ 0x3394, 0xE4103078 },
+	{ 0x3396, 0xE4103070 },
+	{ 0x3398, 0xE4103066 },
+	{ 0x339A, 0xE410F056 },
+	{ 0x339C, 0xE4143078 },
+	{ 0x339E, 0xE4143070 },
+	{ 0x33A0, 0xE4143066 },
+	{ 0x33A2, 0xE414F056 },
+};
 
 /* We use a function so we can use ARRAY_SIZE() */
 int clearwater_patch(struct arizona *arizona)
 {
 	int ret = 0;
+	const struct reg_default *patch16 = NULL;
+	const struct reg_default *patch32 = NULL;
+	unsigned int num16, num32;
 
 	switch (arizona->rev) {
 	case 0:
 	case 1:
-		ret = regmap_register_patch(arizona->regmap,
-					     clearwater_reva_16_patch,
-					     ARRAY_SIZE(clearwater_reva_16_patch));
-		if (ret < 0) {
-			dev_err(arizona->dev, "Error in applying Clearwater Rev A 16 bit patch\n");
-			return ret;
-		}
-		ret = clearwater_patch_32(arizona);
-		if (ret < 0) {
-			dev_err(arizona->dev, "Error in applying Clearwater Rev A 32 bit patch\n");
-			return ret;
-		}
+		patch16 = clearwater_reva_16_patch;
+		num16 = ARRAY_SIZE(clearwater_reva_16_patch);
+
+		patch32 = clearwater_reva_32_patch;
+		num32 = ARRAY_SIZE(clearwater_reva_32_patch);
 		break;
 	default:
-		ret = regmap_register_patch(arizona->regmap,
-					     clearwater_revb_16_patch,
-					     ARRAY_SIZE(clearwater_revb_16_patch));
+		patch16 = clearwater_revc_16_patch;
+		num16 = ARRAY_SIZE(clearwater_revc_16_patch);
+
+		patch32 = clearwater_revc_32_patch;
+		num32 = ARRAY_SIZE(clearwater_revc_32_patch);
+		break;
+	}
+
+	if (patch16) {
+		ret = regmap_register_patch(arizona->regmap, patch16, num16);
 		if (ret < 0) {
 			dev_err(arizona->dev,
-				"Error in applying Clearwater Rev B 16 bit patch\n");
+				"Error in applying 16-bit patch: %d\n", ret);
 			return ret;
 		}
-		break;
+	}
+
+	if (patch32) {
+		ret = regmap_register_patch(arizona->regmap_32bit,
+					    patch32, num32);
+		if (ret < 0) {
+			dev_err(arizona->dev,
+				"Error in applying 32-bit patch: %d\n", ret);
+			return ret;
+		}
 	}
 
 	return 0;
@@ -445,6 +465,7 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000095, 0x0000 }, /* R149 (0x95) - Haptics phase 2 duration */
 	{ 0x00000096, 0x0000 }, /* R150 (0x96) - Haptics phase 3 intensity */
 	{ 0x00000097, 0x0000 }, /* R151 (0x97) - Haptics phase 3 duration */
+	{ 0x000000A0, 0x0000 }, /* R160 (0xA0) - Clearwater Comfort Noise Generator */
 	{ 0x00000100, 0x0002 }, /* R256 (0x100) - Clock 32k 1 */
 	{ 0x00000101, 0x0404 }, /* R257 (0x101) - System Clock 1 */
 	{ 0x00000102, 0x0011 }, /* R258 (0x102) - Sample rate 1 */
@@ -524,15 +545,9 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000219, 0x00e6 }, /* R537 (0x219) - Mic Bias Ctrl 2 */
 	{ 0x0000021a, 0x00e6 }, /* R538 (0x21A) - Mic Bias Ctrl 3 */
 	{ 0x0000021B, 0x00e6 }, /* R539  - Mic Bias Ctrl 4 */
-	{ 0x00000225, 0x1406 },
-	{ 0x00000226, 0x1406 },
-	{ 0x00000227, 0x1406 },
-	{ 0x00000228, 0x1406 },
-	{ 0x00000229, 0x1406 },
-	{ 0x0000022a, 0x1406 },
+	{ 0x0000027e, 0x0000 }, /* R638 (0x27E) - Clearwater EDRE HP stereo control */
 	{ 0x00000293, 0x0000 }, /* R659 (0x293) - Accessory Detect Mode 1 */
 	{ 0x0000029b, 0x0000 }, /* R667 (0x29B) - Headphone Detect 1 */
-	{ 0x0000029f, 0x0000 },
 	{ 0x000002a3, 0x1102 }, /* R675 (0x2A3) - Mic Detect 1 */
 	{ 0x000002a4, 0x009f }, /* R676 (0x2A4) - Mic Detect 2 */
 	{ 0x000002a6, 0x3737 },
@@ -1491,6 +1506,7 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000F02, 0x0000 }, /* R3842  - Arizona DSP Status */
 	{ 0x00000F08, 0x001c }, /* R3848  - ANC Coefficient */
 	{ 0x00000F09, 0x0000 }, /* R3849  - ANC Coefficient */
+	{ 0x00000F0A, 0x0000 }, /* R3850  - ANC Coefficient */
 	{ 0x00000F0B, 0x0000 }, /* R3851  - ANC Coefficient */
 	{ 0x00000F0C, 0x0000 }, /* R3852  - ANC Coefficient */
 	{ 0x00000F0D, 0x0000 }, /* R3853  - ANC Coefficient */
@@ -1867,6 +1883,7 @@ static bool clearwater_is_adsp_memory(struct device *dev, unsigned int reg)
 static bool clearwater_16bit_readable_register(struct device *dev, unsigned int reg)
 {
 	switch (reg) {
+	case 0x2C2:
 	case ARIZONA_SOFTWARE_RESET:
 	case ARIZONA_DEVICE_REVISION:
 	case ARIZONA_CTRL_IF_SPI_CFG_1:
@@ -1897,7 +1914,6 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_ALWAYS_ON_TRIGGERS_SEQUENCE_SELECT_4:
 	case ARIZONA_ALWAYS_ON_TRIGGERS_SEQUENCE_SELECT_5:
 	case ARIZONA_ALWAYS_ON_TRIGGERS_SEQUENCE_SELECT_6:
-	case ARIZONA_COMFORT_NOISE_GENERATOR:
 	case ARIZONA_HAPTICS_CONTROL_1:
 	case ARIZONA_HAPTICS_CONTROL_2:
 	case ARIZONA_HAPTICS_PHASE_1_INTENSITY:
@@ -1907,6 +1923,7 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_HAPTICS_PHASE_3_INTENSITY:
 	case ARIZONA_HAPTICS_PHASE_3_DURATION:
 	case ARIZONA_HAPTICS_STATUS:
+	case CLEARWATER_COMFORT_NOISE_GENERATOR:
 	case ARIZONA_CLOCK_32K_1:
 	case ARIZONA_SYSTEM_CLOCK_1:
 	case ARIZONA_SAMPLE_RATE_1:
@@ -1997,9 +2014,14 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_HP_CTRL_2R:
 	case ARIZONA_HP_CTRL_3L:
 	case ARIZONA_HP_CTRL_3R:
+	case ARIZONA_DCS_HP1L_CONTROL:
+	case ARIZONA_DCS_HP1R_CONTROL:
+	case CLEARWATER_EDRE_HP_STEREO_CONTROL:
 	case ARIZONA_ACCESSORY_DETECT_MODE_1:
 	case ARIZONA_HEADPHONE_DETECT_1:
 	case ARIZONA_HEADPHONE_DETECT_2:
+	case ARIZONA_HEADPHONE_DETECT_3:
+	case ARIZONA_HP_DACVAL:
 	case CLEARWATER_MICD_CLAMP_CONTROL:
 	case ARIZONA_MIC_DETECT_1:
 	case ARIZONA_MIC_DETECT_2:
@@ -3200,6 +3222,7 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 static bool clearwater_16bit_volatile_register(struct device *dev, unsigned int reg)
 {
 	switch (reg) {
+	case 0x2C2:
 	case ARIZONA_SOFTWARE_RESET:
 	case ARIZONA_DEVICE_REVISION:
 	case ARIZONA_HAPTICS_STATUS:
@@ -3207,9 +3230,20 @@ static bool clearwater_16bit_volatile_register(struct device *dev, unsigned int 
 	case ARIZONA_SAMPLE_RATE_2_STATUS:
 	case ARIZONA_SAMPLE_RATE_3_STATUS:
 	case ARIZONA_ASYNC_SAMPLE_RATE_1_STATUS:
+	case ARIZONA_ASYNC_SAMPLE_RATE_2_STATUS:
+	case ARIZONA_HP_CTRL_1L:
+	case ARIZONA_HP_CTRL_1R:
+	case ARIZONA_HP_CTRL_2L:
+	case ARIZONA_HP_CTRL_2R:
+	case ARIZONA_HP_CTRL_3L:
+	case ARIZONA_HP_CTRL_3R:
+	case ARIZONA_DCS_HP1L_CONTROL:
+	case ARIZONA_DCS_HP1R_CONTROL:
 	case ARIZONA_MIC_DETECT_3:
 	case ARIZONA_MIC_DETECT_4:
 	case ARIZONA_HEADPHONE_DETECT_2:
+	case ARIZONA_HEADPHONE_DETECT_3:
+	case ARIZONA_HP_DACVAL:
 	case ARIZONA_INPUT_ENABLES_STATUS:
 	case ARIZONA_OUTPUT_STATUS_1:
 	case ARIZONA_RAW_OUTPUT_STATUS_1:
@@ -3282,6 +3316,7 @@ static bool clearwater_32bit_readable_register(struct device *dev, unsigned int 
 {
 	switch (reg) {
 	case ARIZONA_WSEQ_SEQUENCE_1 ... ARIZONA_WSEQ_SEQUENCE_508:
+	case CLEARWATER_OTP_HPDET_CALIB_1 ... CLEARWATER_OTP_HPDET_CALIB_2:
 	case CLEARWATER_DSP1_CONFIG ... CLEARWATER_DSP1_SCRATCH_3:
 	case CLEARWATER_DSP2_CONFIG ... CLEARWATER_DSP2_SCRATCH_3:
 	case CLEARWATER_DSP3_CONFIG ... CLEARWATER_DSP3_SCRATCH_3:
@@ -3299,6 +3334,7 @@ static bool clearwater_32bit_volatile_register(struct device *dev, unsigned int 
 {
 	switch (reg) {
 	case ARIZONA_WSEQ_SEQUENCE_1 ... ARIZONA_WSEQ_SEQUENCE_508:
+	case CLEARWATER_OTP_HPDET_CALIB_1 ... CLEARWATER_OTP_HPDET_CALIB_2:
 	case CLEARWATER_DSP1_CONFIG ... CLEARWATER_DSP1_SCRATCH_3:
 	case CLEARWATER_DSP2_CONFIG ... CLEARWATER_DSP2_SCRATCH_3:
 	case CLEARWATER_DSP3_CONFIG ... CLEARWATER_DSP3_SCRATCH_3:
@@ -3354,7 +3390,7 @@ const struct regmap_config clearwater_32bit_spi_regmap = {
 	.readable_reg = clearwater_32bit_readable_register,
 	.volatile_reg = clearwater_32bit_volatile_register,
 
-	.cache_type = REGCACHE_NONE,
+	.cache_type = REGCACHE_RBTREE,
 };
 EXPORT_SYMBOL_GPL(clearwater_32bit_spi_regmap);
 
@@ -3368,6 +3404,6 @@ const struct regmap_config clearwater_32bit_i2c_regmap = {
 	.readable_reg = clearwater_32bit_readable_register,
 	.volatile_reg = clearwater_32bit_volatile_register,
 
-	.cache_type = REGCACHE_NONE,
+	.cache_type = REGCACHE_RBTREE,
 };
 EXPORT_SYMBOL_GPL(clearwater_32bit_i2c_regmap);
