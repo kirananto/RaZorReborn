@@ -661,6 +661,7 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 	gpio_set_value(TPS65132_GPIO_POS_EN, 1);
 	gpio_set_value(TPS65132_GPIO_NEG_EN, 1);
 #endif
+
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
@@ -694,7 +695,6 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 		pr_err("%s: Invalid input data\n", __func__);
 		return -EINVAL;
 	}
-
 
 #ifdef CONFIG_MACH_T86519A1
 	gpio_set_value(TPS65132_GPIO_POS_EN, 0);
