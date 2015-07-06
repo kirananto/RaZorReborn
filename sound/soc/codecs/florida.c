@@ -47,7 +47,6 @@ struct florida_compr {
 	size_t total_copied;
 	bool allocated;
 	bool trig;
-	bool forced;
 };
 
 struct florida_priv {
@@ -221,35 +220,31 @@ static int florida_sysclk_ev(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
-static int florida_virt_dsp_power_ev(struct snd_soc_dapm_widget *w,
-				    struct snd_kcontrol *kcontrol, int event)
+static int florida_adsp_power_ev(struct snd_soc_dapm_widget *w,
+				 struct snd_kcontrol *kcontrol,
+				 int event)
 {
 	struct florida_priv *florida = snd_soc_codec_get_drvdata(w->codec);
 
-	mutex_lock(&florida->compr_info.lock);
-
-	if (!florida->compr_info.stream)
-		florida->compr_info.trig = false;
-
 	switch (event) {
-	case SND_SOC_DAPM_POST_PMU:
-		florida->compr_info.forced = true;
-		break;
-	case SND_SOC_DAPM_PRE_PMD:
-		florida->compr_info.forced = false;
+	case SND_SOC_DAPM_PRE_PMU:
+		if (w->shift == 2) {
+			mutex_lock(&florida->compr_info.lock);
+			florida->compr_info.trig = false;
+			mutex_unlock(&florida->compr_info.lock);
+		}
 		break;
 	default:
 		break;
 	}
 
-	mutex_unlock(&florida->compr_info.lock);
-
-	return 0;
+	return arizona_adsp_power_ev(w, kcontrol, event);
 }
 
 static DECLARE_TLV_DB_SCALE(ana_tlv, 0, 100, 0);
 static DECLARE_TLV_DB_SCALE(eq_tlv, -1200, 100, 0);
 static DECLARE_TLV_DB_SCALE(digital_tlv, -6400, 50, 0);
+static DECLARE_TLV_DB_SCALE(vol_limit_tlv, -600, 50, 116);
 static DECLARE_TLV_DB_SCALE(noise_tlv, 0, 600, 0);
 static DECLARE_TLV_DB_SCALE(ng_tlv, -10200, 600, 0);
 
@@ -451,6 +446,7 @@ SOC_VALUE_ENUM("ISRC1 FSH", arizona_isrc_fsh[0]),
 SOC_VALUE_ENUM("ISRC2 FSH", arizona_isrc_fsh[1]),
 SOC_VALUE_ENUM("ISRC3 FSH", arizona_isrc_fsh[2]),
 SOC_VALUE_ENUM("ASRC RATE 1", arizona_asrc_rate1),
+SOC_VALUE_ENUM("ASRC RATE 2", arizona_asrc_rate2),
 
 ARIZONA_MIXER_CONTROLS("DSP1L", ARIZONA_DSP1LMIX_INPUT_1_SOURCE),
 ARIZONA_MIXER_CONTROLS("DSP1R", ARIZONA_DSP1RMIX_INPUT_1_SOURCE),
@@ -524,17 +520,39 @@ SOC_DOUBLE_R_TLV("SPKDAT2 Digital Volume", ARIZONA_DAC_DIGITAL_VOLUME_6L,
 		 ARIZONA_DAC_DIGITAL_VOLUME_6R, ARIZONA_OUT6L_VOL_SHIFT,
 		 0xbf, 0, digital_tlv),
 
+SOC_DOUBLE_R_RANGE_TLV("HPOUT1 Volume Limit", ARIZONA_DAC_VOLUME_LIMIT_1L,
+		 ARIZONA_DAC_VOLUME_LIMIT_1R, ARIZONA_OUT1L_VOL_LIM_SHIFT,
+		 0x74, 0x8C, 0, vol_limit_tlv),
+SOC_DOUBLE_R_RANGE_TLV("HPOUT2 Volume Limit", ARIZONA_DAC_VOLUME_LIMIT_2L,
+		 ARIZONA_DAC_VOLUME_LIMIT_2R, ARIZONA_OUT1L_VOL_LIM_SHIFT,
+		 0x74, 0x8C, 0, vol_limit_tlv),
+SOC_DOUBLE_R_RANGE_TLV("HPOUT3 Volume Limit", ARIZONA_DAC_VOLUME_LIMIT_3L,
+		 ARIZONA_DAC_VOLUME_LIMIT_3R, ARIZONA_OUT1L_VOL_LIM_SHIFT,
+		 0x74, 0x8C, 0, vol_limit_tlv),
+SOC_DOUBLE_R_RANGE_TLV("Speaker Volume Limit", ARIZONA_OUT_VOLUME_4L,
+		 ARIZONA_OUT_VOLUME_4R, ARIZONA_OUT1L_VOL_LIM_SHIFT,
+		 0x74, 0x8C, 0, vol_limit_tlv),
+SOC_DOUBLE_R_RANGE_TLV("SPKDAT1 Volume Limit", ARIZONA_DAC_VOLUME_LIMIT_5L,
+		 ARIZONA_DAC_VOLUME_LIMIT_5R, ARIZONA_OUT1L_VOL_LIM_SHIFT,
+		 0x74, 0x8C, 0, vol_limit_tlv),
+SOC_DOUBLE_R_RANGE_TLV("SPKDAT2 Volume Limit", ARIZONA_DAC_VOLUME_LIMIT_6L,
+		 ARIZONA_DAC_VOLUME_LIMIT_6R, ARIZONA_OUT1L_VOL_LIM_SHIFT,
+		 0x74, 0x8C, 0, vol_limit_tlv),
+
 SOC_DOUBLE("SPKDAT1 Switch", ARIZONA_PDM_SPK1_CTRL_1, ARIZONA_SPK1L_MUTE_SHIFT,
 	   ARIZONA_SPK1R_MUTE_SHIFT, 1, 1),
 SOC_DOUBLE("SPKDAT2 Switch", ARIZONA_PDM_SPK2_CTRL_1, ARIZONA_SPK2L_MUTE_SHIFT,
 	   ARIZONA_SPK2R_MUTE_SHIFT, 1, 1),
 
-SOC_DOUBLE("HPOUT1 DRE Switch", ARIZONA_DRE_ENABLE,
-	   ARIZONA_DRE1L_ENA_SHIFT, ARIZONA_DRE1R_ENA_SHIFT, 1, 0),
-SOC_DOUBLE("HPOUT2 DRE Switch", ARIZONA_DRE_ENABLE,
-	   ARIZONA_DRE2L_ENA_SHIFT, ARIZONA_DRE2R_ENA_SHIFT, 1, 0),
-SOC_DOUBLE("HPOUT3 DRE Switch", ARIZONA_DRE_ENABLE,
-	   ARIZONA_DRE3L_ENA_SHIFT, ARIZONA_DRE3R_ENA_SHIFT, 1, 0),
+SOC_DOUBLE_EXT("HPOUT1 DRE Switch", ARIZONA_DRE_ENABLE,
+	   ARIZONA_DRE1L_ENA_SHIFT, ARIZONA_DRE1R_ENA_SHIFT, 1, 0,
+	   snd_soc_get_volsw, florida_put_dre),
+SOC_DOUBLE_EXT("HPOUT2 DRE Switch", ARIZONA_DRE_ENABLE,
+	   ARIZONA_DRE2L_ENA_SHIFT, ARIZONA_DRE2R_ENA_SHIFT, 1, 0,
+	   snd_soc_get_volsw, florida_put_dre),
+SOC_DOUBLE_EXT("HPOUT3 DRE Switch", ARIZONA_DRE_ENABLE,
+	   ARIZONA_DRE3L_ENA_SHIFT, ARIZONA_DRE3R_ENA_SHIFT, 1, 0,
+	   snd_soc_get_volsw, florida_put_dre),
 
 SOC_ENUM("Output Ramp Up", arizona_out_vi_ramp),
 SOC_ENUM("Output Ramp Down", arizona_out_vd_ramp),
@@ -894,10 +912,10 @@ SND_SOC_DAPM_PGA("ASRC2L", ARIZONA_ASRC_ENABLE, ARIZONA_ASRC2L_ENA_SHIFT, 0,
 SND_SOC_DAPM_PGA("ASRC2R", ARIZONA_ASRC_ENABLE, ARIZONA_ASRC2R_ENA_SHIFT, 0,
 		 NULL, 0),
 
-WM_ADSP2("DSP1", 0, arizona_adsp_power_ev),
-WM_ADSP2("DSP2", 1, arizona_adsp_power_ev),
-WM_ADSP2("DSP3", 2, arizona_adsp_power_ev),
-WM_ADSP2("DSP4", 3, arizona_adsp_power_ev),
+WM_ADSP2("DSP1", 0, florida_adsp_power_ev),
+WM_ADSP2("DSP2", 1, florida_adsp_power_ev),
+WM_ADSP2("DSP3", 2, florida_adsp_power_ev),
+WM_ADSP2("DSP4", 3, florida_adsp_power_ev),
 
 SND_SOC_DAPM_PGA("ISRC1INT1", ARIZONA_ISRC_1_CTRL_3,
 		 ARIZONA_ISRC1_INT0_ENA_SHIFT, 0, NULL, 0),
@@ -1222,9 +1240,8 @@ SND_SOC_DAPM_VIRT_MUX("DSP2 Virtual Input", SND_SOC_NOPM, 0, 0,
 SND_SOC_DAPM_VIRT_MUX("DSP3 Virtual Input", SND_SOC_NOPM, 0, 0,
 		      &florida_memory_mux[1]),
 
-SND_SOC_DAPM_VIRT_MUX_E("DSP Virtual Output Mux", SND_SOC_NOPM, 0, 0,
-		      &florida_dsp_output_mux[0], florida_virt_dsp_power_ev,
-		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
+SND_SOC_DAPM_VIRT_MUX("DSP Virtual Output Mux", SND_SOC_NOPM, 0, 0,
+		      &florida_dsp_output_mux[0]),
 
 ARIZONA_MUX_WIDGETS(ISRC1DEC1, "ISRC1DEC1"),
 ARIZONA_MUX_WIDGETS(ISRC1DEC2, "ISRC1DEC2"),
@@ -1973,8 +1990,6 @@ static int florida_free(struct snd_compr_stream *stream)
 	florida->compr_info.allocated = false;
 	florida->compr_info.stream = NULL;
 	florida->compr_info.total_copied = 0;
-	if (!florida->compr_info.forced)
-		florida->compr_info.trig = false;
 
 	wm_adsp_stream_free(florida->compr_info.adsp);
 

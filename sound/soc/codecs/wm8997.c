@@ -202,7 +202,7 @@ static int wm8997_sysclk_ev(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
-static const char *wm8997_osr_text[] = {
+static const char * const wm8997_osr_text[] = {
 	"Low power", "Normal", "High performance",
 };
 
@@ -330,6 +330,7 @@ SND_SOC_BYTES("LHPF4 Coefficients", ARIZONA_HPLPF4_2, 1),
 
 SOC_VALUE_ENUM("ISRC1 FSL", arizona_isrc_fsl[0]),
 SOC_VALUE_ENUM("ISRC2 FSL", arizona_isrc_fsl[1]),
+SOC_VALUE_ENUM("ASRC RATE 1", arizona_asrc_rate1),
 
 ARIZONA_MIXER_CONTROLS("Mic", ARIZONA_MICMIX_INPUT_1_SOURCE),
 ARIZONA_MIXER_CONTROLS("Noise", ARIZONA_NOISEMIX_INPUT_1_SOURCE),
@@ -472,7 +473,7 @@ ARIZONA_MUX_ENUMS(ISRC2INT2, ARIZONA_ISRC2INT2MIX_INPUT_1_SOURCE);
 ARIZONA_MUX_ENUMS(ISRC2DEC1, ARIZONA_ISRC2DEC1MIX_INPUT_1_SOURCE);
 ARIZONA_MUX_ENUMS(ISRC2DEC2, ARIZONA_ISRC2DEC2MIX_INPUT_1_SOURCE);
 
-static const char *wm8997_aec_loopback_texts[] = {
+static const char * const wm8997_aec_loopback_texts[] = {
 	"HPOUT1L", "HPOUT1R", "EPOUT", "SPKOUT", "SPKDAT1L", "SPKDAT1R",
 };
 
@@ -976,10 +977,6 @@ static const struct snd_soc_dapm_route wm8997_dapm_routes[] = {
 	ARIZONA_MUX_ROUTES("ISRC1DEC1", "ISRC1DEC1"),
 	ARIZONA_MUX_ROUTES("ISRC1DEC2", "ISRC1DEC2"),
 
-<<<<<<< HEAD:sound/soc/codecs/wm5110.c
-	{ "HPOUT3L", NULL, "OUT3L" },
-	{ "HPOUT3R", NULL, "OUT3R" },
-=======
 	ARIZONA_MUX_ROUTES("ISRC2INT1", "ISRC2INT1"),
 	ARIZONA_MUX_ROUTES("ISRC2INT2", "ISRC2INT2"),
 
@@ -990,7 +987,6 @@ static const struct snd_soc_dapm_route wm8997_dapm_routes[] = {
 	{ "AEC Loopback", "HPOUT1R", "OUT1R" },
 	{ "HPOUT1L", NULL, "OUT1L" },
 	{ "HPOUT1R", NULL, "OUT1R" },
->>>>>>> eb1c607:sound/soc/codecs/wm8997.c
 
 	{ "AEC Loopback", "EPOUT", "OUT3L" },
 	{ "EPOUTN", NULL, "OUT3L" },
