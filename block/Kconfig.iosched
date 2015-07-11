@@ -32,6 +32,14 @@ config IOSCHED_DEADLINE
 	  a new point in the service tree and doing a batch of IO from there
 	  in case of expiry.
 
+config IOSCHED_ZEN
+	tristate "Zen I/O scheduler"
+	default y
+	---help---
+	  Based on the VR Scheduler. It's an FCFS (First come, first serve)
+	  based algorithm.
+	  It's not strictly FIFO. It does not do any sorting.
+
 config IOSCHED_ROW
 	tristate "ROW I/O scheduler"
 	default y
@@ -128,6 +136,7 @@ choice
 
 	config DEFAULT_NOOP
 		bool "No-op"
+	
 
 endchoice
 
@@ -139,6 +148,7 @@ config DEFAULT_IOSCHED
 	default "fiops" if DEFAULT_FIOPS
 	default "bfq" if DEFAULT_BFQ
 	default "noop" if DEFAULT_NOOP
+	default "zen" if DEFAULT_ZEN
 
 endmenu
 
