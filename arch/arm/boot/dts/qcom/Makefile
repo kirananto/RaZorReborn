@@ -43,8 +43,10 @@ ifeq ($(CONFIG_MACH_YULONG_MSM8939),y)
 dtb-$(CONFIG_ARCH_MSM8916) += msm8939-cp8675-i01-p0.dtb
 else ifeq ($(CONFIG_MACH_HAIER_MSM8916),y)
 dtb-$(CONFIG_ARCH_MSM8916) += msm8916-g36c1h.dtb
-else ifeq ($(CONFIG_MACH_WINGTECH_MSM8916),y)
+else ifeq ($(CONFIG_MACH_T86519A1),y)
 dtb-$(CONFIG_ARCH_MSM8916) += msm8916-t86519a1.dtb
+else ifeq ($(CONFIG_MACH_WT88047),y)
+dtb-$(CONFIG_ARCH_MSM8916) += msm8916-wt88047.dtb
 else
 dtb-$(CONFIG_ARCH_MSM8916) += msm8916-sim.dtb \
 	msm8916-rumi.dtb \
