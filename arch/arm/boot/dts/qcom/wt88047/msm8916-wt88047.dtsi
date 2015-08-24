@@ -139,51 +139,51 @@
 };
 
 &mdss_dsi_r69431_720p_video {
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
 
 &mdss_dsi_nt35521_720p_video {
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
 
 &mdss_dsi_nt35521s_720p_video {
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
 
 &mdss_dsi_nt35521_ofilm_720p_video {
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
 
 &mdss_dsi_otm1285a_720p_video {
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
 
 &mdss_dsi_r61308_720p_video {
 	/* qcom,esd-check-enabled; */
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
 
 &mdss_dsi_otm1285a_otp_720p_video {
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
 
 &mdss_dsi_r61308_s88047a1_720p_video {
 	/* qcom,esd-check-enabled; */
-	/* qcom,cont-splash-enabled; */
+	qcom,cont-splash-enabled;
 	qcom,mdss-dsi-lp11-init;
 	qcom,mdss-dsi-init-delay-us = <200>;
 };
