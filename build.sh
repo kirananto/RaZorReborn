@@ -27,7 +27,7 @@ nocol='\033[0m'
 export CROSS_COMPILE="../../Toolchains/aarch64-linux-android-6.0/bin/aarch64-linux-android-"
 export USE_CCACHE=1
 export ARCH=arm64
-export SUBARCH=arm
+export SUBARCH=arm64
 export KBUILD_BUILD_USER="Kiran.Anto"
 export KBUILD_BUILD_HOST="RaZor-Machine"
 STRIP="../../../Toolchains/aarch64-linux-android-6.0/bin/aarch64-linux-android-strip"
@@ -46,7 +46,7 @@ echo "                    "
 echo "                                        Compiling RaZorReborn kernel                    "
 echo "                    "
 echo -e "**********************************************************************************************"
-make razor_plutonium_defconfig
+make cm_plutonium_defconfig
 make -j12
 if ! [ -a $KERN_IMG ];
 then
