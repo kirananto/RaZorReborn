@@ -2343,7 +2343,7 @@ static int write_cache_pages_da(handle_t *handle,
 				continue;
 			}
 
-			wait_on_page_writeback(page);
+			wait_for_stable_page(page);
 			BUG_ON(PageWriteback(page));
 
 			/*
