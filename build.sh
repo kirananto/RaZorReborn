@@ -36,7 +36,7 @@ MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Common
 compile_kernel ()
 {
 rm -rf $MODULES_DIR/../PLUTONIUM/tools/kernel
-rm -rf $MODULES_DIR/../PLUTONIUM/tools/dt.img
+#rm -rf $MODULES_DIR/../PLUTONIUM/tools/dt.img
 rm -rf $MODULES_DIR/../PLUTONIUM/system/lib/modules/*
 rm -rf $KERNEL_DIR/arch/arm64/boot/Image
 rm -rf $KERNEL_DIR/*.ko
@@ -81,7 +81,7 @@ compile_kernel
 ;;
 esac
 cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../PLUTONIUM/tools/kernel
-cp $KERNEL_DIR/arch/arm64/boot/dt.img $MODULES_DIR/../PLUTONIUM/tools/dt.img
+#cp $KERNEL_DIR/arch/arm64/boot/dt.img $MODULES_DIR/../PLUTONIUM/tools/dt.img
 cp $MODULES_DIR/* $MODULES_DIR/../PLUTONIUM/system/lib/modules/
 cd $MODULES_DIR/../PLUTONIUM
 zipfile="RRV1OPO2UBER-$(date +"%Y-%m-%d(%I.%M%p)").zip"
