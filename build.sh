@@ -46,7 +46,7 @@ echo "                    "
 echo "                                        Compiling RaZorReborn kernel                    "
 echo "                    "
 echo -e "**********************************************************************************************"
-make cm_plutonium_defconfig
+make RAZOr_perfplutonium_defconfig
 make -j12
 if ! [ -a $KERN_IMG ];
 then
