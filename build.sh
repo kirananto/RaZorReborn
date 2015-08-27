@@ -35,11 +35,13 @@ MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Common
 
 compile_kernel ()
 {
-rm $MODULES_DIR/../PLUTONIUM/tools/kernel
-rm $MODULES_DIR/../PLUTONIUM/tools/dt.img
-rm $KERNEL_DIR/arch/arm64/boot/Image
-rm $KERNEL_DIR/arch/arm64/boot/Image.gz
-rm $KERNEL_DIR/arch/arm64/boot/dts/*.dtb
+rm -rf $MODULES_DIR/../PLUTONIUM/tools/kernel
+rm -rf $MODULES_DIR/../PLUTONIUM/tools/dt.img
+rm -rf $MODULES_DIR/../PLUTONIUM/system/lib/modules/*
+rm -rf $KERNEL_DIR/arch/arm64/boot/Image
+rm -rf $KERNEL_DIR/*.ko
+rm -rf $KERNEL_DIR/arch/arm64/boot/Image.gz
+rm -rf $KERNEL_DIR/arch/arm64/boot/dts/*.dtb
 rm -rf $MODULES_DIR/../PLUTONIUM/system/lib/modules/*
 echo -e "**********************************************************************************************"
 echo "                    "
@@ -84,8 +86,8 @@ cp $MODULES_DIR/* $MODULES_DIR/../PLUTONIUM/system/lib/modules/
 cd $MODULES_DIR/../PLUTONIUM
 zipfile="RRV1OPO2UBER-$(date +"%Y-%m-%d(%I.%M%p)").zip"
 zip -r $zipfile system tools META-INF -x *kernel/.gitignore*
-dropbox_uploader -p upload $MODULES_DIR/../PLUTONIUM/$zipfile /
-dropbox_uploader share /$zipfile
+dropbox_uploader -p upload $MODULES_DIR/../PLUTONIUM/$zipfile /test/
+dropbox_uploader share /test/$zipfile
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
