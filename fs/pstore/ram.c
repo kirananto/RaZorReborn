@@ -407,7 +407,7 @@ static int ramoops_init_prz(struct device *dev, struct ramoops_context *cxt,
 void notrace ramoops_console_write_buf(const char *buf, size_t size)
 {
 	struct ramoops_context *cxt = &oops_cxt;
-	persistent_ram_write(cprz, buf, size);
+	persistent_ram_write(cxt->cprz, buf, size);
 }
 
 #ifdef VENDOR_EDIT  // add by xcb for ramoops 2015-03-31
