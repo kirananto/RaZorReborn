@@ -35,7 +35,7 @@ MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Common
 
 compile_kernel ()
 {
-rm -rf $MODULES_DIR/../PLUTONIUM/tools/kernel
+rm -rf /home/kiran/Downloads/sokpbootimg/mkbootimg_tools/plutonium/kernel
 #rm -rf $MODULES_DIR/../PLUTONIUM/tools/dt.img
 rm -rf $MODULES_DIR/../PLUTONIUM/system/lib/modules/*
 rm -rf $KERNEL_DIR/arch/arm64/boot/Image
@@ -80,14 +80,15 @@ make ARCH=arm64 -j8 clean mrproper
 compile_kernel
 ;;
 esac
-cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../PLUTONIUM/tools/kernel
+cp $KERNEL_DIR/arch/arm64/boot/Image  /home/kiran/Downloads/sokpbootimg/mkbootimg_tools/plutonium/kernel
 #cp $KERNEL_DIR/arch/arm64/boot/dt.img $MODULES_DIR/../PLUTONIUM/tools/dt.img
-cp $MODULES_DIR/* $MODULES_DIR/../PLUTONIUM/system/lib/modules/
-cd $MODULES_DIR/../PLUTONIUM
-zipfile="RRV1OPO2UBER-$(date +"%Y-%m-%d(%I.%M%p)").zip"
-zip -r $zipfile system tools META-INF -x *kernel/.gitignore*
-dropbox_uploader -p upload $MODULES_DIR/../PLUTONIUM/$zipfile /test/
-dropbox_uploader share /test/$zipfile
+#cp $MODULES_DIR/* $MODULES_DIR/../PLUTONIUM/system/lib/modules/
+#cd $MODULES_DIR/../PLUTONIUM
+cd /home/kiran/Downloads/sokpbootimg/mkbootimg_tools
+imgfile="RRV1OPO2UBER-$(date +"%Y-%m-%d(%I.%M%p)").img"
+./mkboot plutonium $imgfile
+dropbox_uploader -p upload $imgfile /test/
+dropbox_uploader share /test/$imgfile
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
