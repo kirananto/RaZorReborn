@@ -35,9 +35,8 @@ MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Common
 
 compile_kernel ()
 {
-rm -rf $MODULES_DIR/../plut/kernel
-#rm -rf $MODULES_DIR/../PLUTONIUM/tools/dt.img
-rm -rf $MODULES_DIR/../plut/modules/*
+rm -rf $MODULES_DIR/../PLUTONIUM/zImage
+rm -rf $MODULES_DIR/../PLUTONIUM/modules/*
 rm -rf $KERNEL_DIR/arch/arm64/boot/Image
 find . -name '*.ko' -delete;
 rm -rf $KERNEL_DIR/arch/arm64/boot/Image.gz
@@ -47,7 +46,7 @@ echo "                    "
 echo "                                        Compiling RaZorReborn kernel                    "
 echo "                    "
 echo -e "**********************************************************************************************"
-make cm_plutonium_defconfig
+make RaZor-OnePlus2_defconfig
 make -j12
 if ! [ -a $KERN_IMG ];
 then
@@ -78,12 +77,11 @@ make ARCH=arm64 -j8 clean mrproper
 compile_kernel
 ;;
 esac
-cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../plut/kernel
-#cp $KERNEL_DIR/arch/arm64/boot/dt.img $MODULES_DIR/../PLUTONIUM/tools/dt.img
-cp $MODULES_DIR/* $MODULES_DIR/../plut/modules/
-cd $MODULES_DIR/../plut
-zipfile="RRV1OPO2UBER-$(date +"%Y-%m-%d(%I.%M%p)").zip"
-zip -r $zipfile modules ramdisk dt.img kernel anykernel.sh tools META-INF -x *kernel/.gitignore*
+cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../PLUTONIUM/zImage
+cp $MODULES_DIR/* $MODULES_DIR/../PLUTONIUM/modules/
+cd $MODULES_DIR/../PLUTONIUM
+zipfile="RAZORTEST-ONEPLUS2-$(date +"%Y-%m-%d(%I.%M%p)").zip"
+zip -r $zipfile modules patch ramdisk dt.img zImage anykernel.sh tools META-INF -x *kernel/.gitignore*
 dropbox_uploader -p upload $zipfile /test/
 dropbox_uploader share /$zipfile
 BUILD_END=$(date +"%s")
