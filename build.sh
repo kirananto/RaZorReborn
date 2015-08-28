@@ -35,20 +35,19 @@ MODULES_DIR=$KERNEL_DIR/../RaZORBUILDOUTPUT/Common
 
 compile_kernel ()
 {
-rm -rf /home/kiran/Downloads/sokpbootimg/mkbootimg_tools/plutonium/kernel
+rm -rf $MODULES_DIR/../plut/kernel
 #rm -rf $MODULES_DIR/../PLUTONIUM/tools/dt.img
-rm -rf $MODULES_DIR/../PLUTONIUM/system/lib/modules/*
+rm -rf $MODULES_DIR/../plut/modules/*
 rm -rf $KERNEL_DIR/arch/arm64/boot/Image
-rm -rf $KERNEL_DIR/*.ko
+find . -name '*.ko' -delete;
 rm -rf $KERNEL_DIR/arch/arm64/boot/Image.gz
 rm -rf $KERNEL_DIR/arch/arm64/boot/dts/*.dtb
-rm -rf $MODULES_DIR/../PLUTONIUM/system/lib/modules/*
 echo -e "**********************************************************************************************"
 echo "                    "
 echo "                                        Compiling RaZorReborn kernel                    "
 echo "                    "
 echo -e "**********************************************************************************************"
-make RAZOr_perfplutonium_defconfig
+make cm_plutonium_defconfig
 make -j12
 if ! [ -a $KERN_IMG ];
 then
@@ -56,7 +55,6 @@ echo -e "$red Kernel Compilation failed! Fix the errors! $nocol"
 exit 1
 fi
 $DTBTOOL -2 -o $KERNEL_DIR/arch/arm64/boot/dt.img -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm64/boot/dts/
-strip_modules
 strip_modules
 }
 
@@ -67,8 +65,8 @@ echo "Copying modules"
 rm $MODULES_DIR/*
 find . -name '*.ko' -exec cp {} $MODULES_DIR/ \;
 cd $MODULES_DIR
-echo "Stripping modules for size"
-$STRIP --strip-unneeded *.ko
+#echo "Stripping modules for size"
+#$STRIP --strip-unneeded *.ko
 cd $KERNEL_DIR
 }
 
@@ -80,15 +78,14 @@ make ARCH=arm64 -j8 clean mrproper
 compile_kernel
 ;;
 esac
-cp $KERNEL_DIR/arch/arm64/boot/Image  /home/kiran/Downloads/sokpbootimg/mkbootimg_tools/plutonium/kernel
+cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../plut/kernel
 #cp $KERNEL_DIR/arch/arm64/boot/dt.img $MODULES_DIR/../PLUTONIUM/tools/dt.img
-#cp $MODULES_DIR/* $MODULES_DIR/../PLUTONIUM/system/lib/modules/
-#cd $MODULES_DIR/../PLUTONIUM
-cd /home/kiran/Downloads/sokpbootimg/mkbootimg_tools
-imgfile="RRV1OPO2UBER-$(date +"%Y-%m-%d(%I.%M%p)").img"
-./mkboot plutonium $imgfile
-dropbox_uploader -p upload $imgfile /test/
-dropbox_uploader share /test/$imgfile
+cp $MODULES_DIR/* $MODULES_DIR/../plut/modules/
+cd $MODULES_DIR/../plut
+zipfile="RRV1OPO2UBER-$(date +"%Y-%m-%d(%I.%M%p)").zip"
+zip -r $zipfile modules ramdisk dt.img kernel anykernel.sh tools META-INF -x *kernel/.gitignore*
+dropbox_uploader -p upload $zipfile /test/
+dropbox_uploader share /$zipfile
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
