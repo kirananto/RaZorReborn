@@ -6,6 +6,8 @@ Dynamic Fsync (Thanks to @VarunChitre)
 Addded KCAL (Thanks to @savoca)
 Vibrator Control (Thanks to @VarunChitre)
 Enabled Arch Power
+Compiled using sabermod
+Graphite optimizations
 AnyKernel2 script used so compatible with all roms... 
 Updated Kernel to 3.10.87
 LowmemoryKiller Tweaks..
@@ -57,5 +59,14 @@ userspace
 LionHeart
 BioShock
 performance	
+HOTPLUGS
+intelliplug
+Alucard 
+MSM_hotplug
+Bricked Hotplug
+Thunderplug
+ZenDecision
+ASMP
+MAKO
 Initial Build
 
