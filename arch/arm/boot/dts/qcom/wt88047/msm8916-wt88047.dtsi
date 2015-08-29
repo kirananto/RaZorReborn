@@ -28,6 +28,10 @@
 		reg = <0x0 0x9ff00000 0x0 0x00100000>;
 		label = "pstore_reserve_mem";
 	};
+
+	splash_region@83000000 {
+		status = "disabled";
+	};
 };
 
 &soc {
@@ -142,6 +146,8 @@
 	qcom,mdss-pref-prim-intf = "dsi";
 
 	mdss_fb0: qcom,mdss_fb_primary {
+		/* Ketut P. Kumajaya: For old bootloader, old splash image */
+		/* Both recovery and bootanimation framebuffer need this */
 		qcom,memblock-reserve = <0x83200000 0xfa0000>;
 		qcom,mdss-fb-splash-logo-enabled;
 	};
