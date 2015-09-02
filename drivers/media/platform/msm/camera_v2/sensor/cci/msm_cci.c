@@ -737,6 +737,7 @@ static int32_t msm_cci_init(struct v4l2_subdev *sd,
 		CDBG("%s: request gpio failed\n", __func__);
 		goto request_gpio_failed;
 	}
+#if !defined(CONFIG_ARCH_MSM8916)
 	cci_dev->reg_ptr = regulator_get(&(cci_dev->pdev->dev),
 					 "qcom,gdscr-vdd");
 	if (IS_ERR_OR_NULL(cci_dev->reg_ptr)) {
@@ -750,6 +751,7 @@ static int32_t msm_cci_init(struct v4l2_subdev *sd,
 			goto clk_enable_failed;
 		}
 	}
+#endif
 	rc = msm_cam_clk_enable(&cci_dev->pdev->dev, cci_clk_info,
 		cci_dev->cci_clk, cci_dev->num_clk, 1);
 	if (rc < 0) {
