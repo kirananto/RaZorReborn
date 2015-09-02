@@ -17,9 +17,9 @@
 #include "wt88047/msm8916-wt88047.dtsi"
 
 / {
-	model = "Qualcomm Technologies, Inc. MSM 8916 QRD SKUM";
-	compatible = "qcom,msm8916-qrd-skum", "qcom,msm8916-qrd", "qcom,msm8916", "qcom,qrd";
-	qcom,board-id = <0x1010b 7>;
+	model = "Qualcomm Technologies, Inc. MSM 8916 WT88047";
+	compatible = "qcom,msm8916-qrd", "qcom,msm8916", "qcom,qrd";
+	qcom,board-id = <0x1010b 7>, <0x1000b 5>, <0x1010b 5>, <0x3010b 5>;
 };
 
 &soc {
@@ -42,8 +42,9 @@
 			qcom,fg-auto-recharge-soc = <99>;
 			qcom,thermistor-c1-coeff = <0x85d2>;
 			qcom,float-voltage-mv = <4350>;
-			qcom,chg-pre-to-fast-mv = <3000>;
-			qcom,iterm-ma = <100>;
+			qcom,iterm-ma = <200>;
+			qcom,recharge-thresh-mv = <100>;
+			qcom,warm-recharge-thresh-mv = <200>;
 			qcom,thermal-mitigation = <1500 700 600 0>;
 			qcom,config-hard-thresholds;
 			qcom,hot-bat-decidegc = <600>;
@@ -174,14 +175,7 @@
 
 	gpio@c200 { /* GPIO 3 */
 		/* External regulator control for WTR */
-		qcom,mode = <1>;
-		qcom,output-type = <1>;
-		qcom,invert = <0>;
-		qcom,pull = <5>;
-		qcom,vin-sel = <0>;
-		qcom,out-strength = <3>;
-		qcom,src-sel = <0>;
-		qcom,master-en = <1>;
+		status = "ok";
 	};
 };
 
