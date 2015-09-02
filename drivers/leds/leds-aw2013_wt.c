@@ -71,7 +71,7 @@ static void aw2013_brightness_set(struct aw2013_data *aw2013, u8 id, u8 brightne
 		return;
 	}
 
-	dev_dbg(&aw2013->i2c->dev, "set brightness of led %d to %d\n", id, brightness);
+	dev_info(&aw2013->i2c->dev, "set brightness of led %d to %d\n", id, brightness);
 
 	aw2013->cdev[id].brightness = brightness;
 
@@ -87,7 +87,7 @@ static void aw2013_blink_set(struct aw2013_data *aw2013, u8 id, u8 blinking)
 		return;
 	}
 
-	dev_dbg(&aw2013->i2c->dev, "id: %d, blinking: %d\n", id, blinking);
+	dev_info(&aw2013->i2c->dev, "id: %d, blinking: %d\n", id, blinking);
 
 	if(blinking)
 		aw2013_write(aw2013, AW2013_REG_LED_CONFIG_BASE + id, aw2013_read(aw2013, AW2013_REG_LED_CONFIG_BASE + id) | AW2013_CONFIG_BLINK_MASK);
