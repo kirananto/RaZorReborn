@@ -42,8 +42,13 @@
 #define AW_LED_RESET_MASK		0x55
 
 #define AW_LED_RESET_DELAY		8
+#ifdef CONFIG_MACH_WT88047
+#define AW2013_VDD_MIN_UV		1800000
+#define AW2013_VDD_MAX_UV		2800000
+#else
 #define AW2013_VDD_MIN_UV		2600000
 #define AW2013_VDD_MAX_UV		3300000
+#endif
 #define AW2013_VI2C_MIN_UV		1800000
 #define AW2013_VI2C_MAX_UV		1800000
 
@@ -637,11 +642,13 @@ static int aw2013_led_probe(struct i2c_client *client,
 
 	mutex_init(&led_array->lock);
 
+#ifndef CONFIG_MACH_WT88047
 	ret = aw_2013_check_chipid(led_array);
 	if (ret) {
 		dev_err(&client->dev, "Check chip id error\n");
 		goto free_led_arry;
 	}
+#endif
 
 	ret = aw2013_led_parse_child_node(led_array, node);
 	if (ret) {
@@ -656,6 +663,20 @@ static int aw2013_led_probe(struct i2c_client *client,
 		dev_err(&client->dev, "power init failed");
 		goto fail_parsed_node;
 	}
+
+#ifdef CONFIG_MACH_WT88047
+	ret = aw2013_power_on(led_array, true);
+	if (ret) {
+		dev_err(&client->dev, "power on failed");
+		goto fail_parsed_node;
+	}
+
+	ret = aw_2013_check_chipid(led_array);
+	if (ret) {
+		dev_err(&client->dev, "Check chip id error\n");
+		goto fail_parsed_node;
+	}
+#endif
 
 	return 0;
 
