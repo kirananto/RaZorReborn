@@ -293,8 +293,10 @@ static int32_t msm_led_trigger_probe(struct platform_device *pdev)
 			CDBG("torch max_current[%d] %d\n",
 				i, fctrl.torch_op_current[i]);
 
+#ifndef CONFIG_MACH_WT88047
 			led_trigger_register_simple(fctrl.torch_trigger_name[i],
 				&fctrl.torch_trigger[i]);
+#endif
 
 			if (flashtype == GPIO_FLASH)
 				if (temp && !fctrl.torch_trigger[i])
