@@ -183,6 +183,10 @@
 	pinctrl-1 = <&mdss_dsi_suspend>;
 
 	qcom,platform-reset-gpio = <&msm_gpio 25 0>;
+
+	qcom,platform-regulator-settings = [02 09 03 00 20 00 01];
+	/delete-property/ qcom,mmss-ulp-clamp-ctrl-offset;
+	/delete-property/ qcom,mmss-phyreset-ctrl-offset;
 };
 
 &dsi_r69431_720p_video {
@@ -244,11 +248,11 @@
 		vdd-supply = <&pm8916_l17>;
 		vio-supply = <&pm8916_l6>;
 		interrupt-parent = <&msm_gpio>;
-		interrupts = <113 0x2002>;
+		interrupts = <113 0x2>;
 		pinctrl-names = "default","sleep";
 		pinctrl-0 = <&ltr553_default>;
 		pinctrl-1 = <&ltr553_sleep>;
-		liteon,irq-gpio = <&msm_gpio 113 0x2002>;
+		liteon,irq-gpio = <&msm_gpio 113 0x2>;
 		liteon,als-ps-persist = <0>;
 		liteon,ps-led = <0x7f>;
 		liteon,ps-pulses = <4>;
@@ -332,16 +336,6 @@
 			aw2013,off-time-ms = <1>;
 		};
 	};
-};
-
-&sdc2_cd_on {
-	/delete-property/ bias-pull-up;
-	bias-pull-down;
-};
-
-&sdc2_cd_off {
-	/delete-property/ bias-disable;
-	bias-pull-down;
 };
 
 &sdhc_2 {

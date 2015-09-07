@@ -148,6 +148,7 @@
 };
 
 &pm8916_pon {
+	/delete-property/ qcom,store-hard-reset-reason;
 	qcom,poweron-vadc = <&pm8916_vadc>;
 
 	qcom,pon_1 {
@@ -171,11 +172,19 @@
 &pm8916_gpios {
 	gpio@c100 { /* GPIO 2 */
 		/* NFC_CLK_REQ */
-		status = "disabled";
+		status = "ok";
 	};
 
 	gpio@c200 { /* GPIO 3 */
 		/* External regulator control for WTR */
+		qcom,mode = <1>;
+		qcom,output-type = <1>;
+		qcom,invert = <0>;
+		qcom,pull = <5>;
+		qcom,vin-sel = <0>;
+		qcom,out-strength = <3>;
+		qcom,src-sel = <0>;
+		qcom,master-en = <1>;
 		status = "ok";
 	};
 };
