@@ -326,7 +326,9 @@ enum msm_vfe_reg_cfg_type {
 	VFE_HW_UPDATE_LOCK,
 	VFE_HW_UPDATE_UNLOCK,
 	SET_WM_UB_SIZE,
+#ifndef CONFIG_WINGTECH_CAMERA
 	SET_UB_POLICY,
+#endif
 };
 
 struct msm_vfe_cfg_cmd2 {
@@ -384,6 +386,7 @@ struct msm_isp_buf_request {
 	enum msm_isp_buf_type buf_type;
 };
 
+#ifndef CONFIG_WINGTECH_CAMERA
 struct msm_isp_qbuf_plane {
 	uint32_t addr;
 	uint32_t offset;
@@ -393,12 +396,17 @@ struct msm_isp_qbuf_buffer {
 	struct msm_isp_qbuf_plane planes[MAX_PLANES_PER_STREAM];
 	uint32_t num_planes;
 };
+#endif
 
 struct msm_isp_qbuf_info {
 	uint32_t handle;
 	int32_t buf_idx;
 	/*Only used for prepare buffer*/
+#ifdef CONFIG_WINGTECH_CAMERA
+	struct v4l2_buffer buffer;
+#else
 	struct msm_isp_qbuf_buffer buffer;
+#endif
 	/*Only used for diverted buffer*/
 	uint32_t dirty_buf;
 };

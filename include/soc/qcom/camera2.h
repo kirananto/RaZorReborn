@@ -14,7 +14,11 @@
 #ifndef __CAMERA2_H__
 #define __CAMERA2_H__
 
+#ifdef CONFIG_WINGTECH_CAMERA
+#include <media/msm_cam_sensor_wingtech.h>
+#else
 #include <media/msm_cam_sensor.h>
+#endif
 #include <linux/interrupt.h>
 #include <linux/of_platform.h>
 #include <linux/of_device.h>
