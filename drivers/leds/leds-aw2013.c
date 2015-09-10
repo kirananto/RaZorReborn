@@ -197,7 +197,7 @@ static int aw2013_power_init(struct aw2013_led *led, bool on)
 			}
 		}
 
-		if (!led->pdata->awgpio > 0) {
+		if (led->pdata->awgpio > 0) {
 			rc = aw2013_configure_gpio(led, on);
 			if (rc) {
 				dev_dbg(&led->client->dev,
@@ -230,7 +230,7 @@ static int aw2013_power_init(struct aw2013_led *led, bool on)
 
 		regulator_put(led->vdd);
 
-		if (!led->pdata->awgpio <= 0) {
+		if (led->pdata->awgpio <= 0) {
 			if (regulator_count_voltages(led->vcc) > 0)
 				regulator_set_voltage(led->vcc, 0, AW2013_VI2C_MAX_UV);
 
