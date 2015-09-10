@@ -197,7 +197,7 @@ static int aw2013_power_init(struct aw2013_led *led, bool on)
 			}
 		}
 
-		if (led->pdata->awgpio > 0) {
+		if (!led->pdata->awgpio > 0) {
 			rc = aw2013_configure_gpio(led, on);
 			if (rc) {
 				dev_dbg(&led->client->dev,
