@@ -1440,7 +1440,7 @@ static int64_t get_batt_id(unsigned int battery_id_uv, u8 bid_info)
 	u64 battery_id_ohm;
 	pr_info("qpnp-fg battery_id_uv= %d\n",battery_id_uv);
 
-	if (!(bid_info & 0x3) >= 1) {
+	if ((!(bid_info & 0x3)) >= 1) {
 		pr_err("can't determine battery id %d\n", bid_info);
 		return -EINVAL;
 	}
