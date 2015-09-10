@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 3.10.49 Kernel Configuration
+# Linux/arm64 3.10.87 Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -332,7 +332,7 @@ CONFIG_MIGRATION=y
 CONFIG_PHYS_ADDR_T_64BIT=y
 CONFIG_ZONE_DMA_FLAG=1
 CONFIG_BOUNCE=y
-CONFIG_KSM=y
+# CONFIG_KSM is not set
 CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
 # CONFIG_TRANSPARENT_HUGEPAGE is not set
 CONFIG_CROSS_MEMORY_ATTACH=y
@@ -2191,7 +2191,6 @@ CONFIG_MSM_ISPIF=y
 # CONFIG_IMX132 is not set
 # CONFIG_OV9724 is not set
 # CONFIG_HI256 is not set
-# CONFIG_OV5648 is not set
 # CONFIG_MT9M114 is not set
 # CONFIG_OV5645 is not set
 # CONFIG_OV7695 is not set
