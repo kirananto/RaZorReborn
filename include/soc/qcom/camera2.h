@@ -150,7 +150,9 @@ struct msm_camera_sensor_board_info {
 	const char *sensor_name;
 	const char *eeprom_name;
 	const char *actuator_name;
+#ifndef CONFIG_WINGTECH_CAMERA
 	const char *ois_name;
+#endif
 	struct msm_camera_slave_info *slave_info;
 	struct msm_camera_csi_lane_params *csi_lane_params;
 	struct msm_camera_sensor_strobe_flash_data *strobe_flash_data;
@@ -221,7 +223,9 @@ struct msm_eeprom_board_info {
 	uint16_t i2c_slaveaddr;
 	struct msm_camera_power_ctrl_t power_info;
 	struct msm_eeprom_cmm_t cmm_data;
+#ifndef CONFIG_WINGTECH_CAMERA
 	enum i2c_freq_mode_t i2c_freq_mode;
+#endif
 };
 
 #endif

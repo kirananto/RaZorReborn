@@ -1,6 +1,10 @@
 #ifndef __LINUX_MSM_CAM_SENSOR_H
 #define __LINUX_MSM_CAM_SENSOR_H
 
+#ifdef CONFIG_WINGTECH_CAMERA
+#include <media/msm_cam_sensor_wingtech.h>
+#else
+
 #ifdef MSM_CAMERA_BIONIC
 #include <sys/types.h>
 #endif
@@ -806,5 +810,7 @@ struct msm_flash_cfg_data_t32 {
 #define VIDIOC_MSM_FLASH_CFG32 \
 	_IOWR('V', BASE_VIDIOC_PRIVATE + 13, struct msm_flash_cfg_data_t32)
 #endif
+
+#endif /* CONFIG_WINGTECH_CAMERA */
 
 #endif /* __LINUX_MSM_CAM_SENSOR_H */

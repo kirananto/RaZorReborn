@@ -1,5 +1,5 @@
-#ifndef __LINUX_MSM_CAM_SENSOR_H
-#define __LINUX_MSM_CAM_SENSOR_H
+#ifndef __LINUX_MSM_CAM_SENSOR_WINGTECH_H
+#define __LINUX_MSM_CAM_SENSOR_WINGTECH_H
 
 #ifdef MSM_CAMERA_BIONIC
 #include <sys/types.h>

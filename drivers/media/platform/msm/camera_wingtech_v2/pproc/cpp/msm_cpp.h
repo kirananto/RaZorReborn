@@ -168,13 +168,11 @@ struct msm_cpp_work_t {
 	struct work_struct my_work;
 	struct cpp_device *cpp_dev;
 };
-#ifndef CONFIG_WINGTECH_CAMERA
 struct msm_cpp_clock_settings_t {
 	long clock_rate;
 	uint64_t avg;
 	uint64_t inst;
 };
-#endif
 
 struct cpp_device {
 	struct platform_device *pdev;

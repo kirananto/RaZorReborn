@@ -17,7 +17,7 @@
 #include <linux/gpio.h>
 #include <linux/clk.h>
 #include <soc/qcom/camera2.h>
-#include <media/msm_cam_sensor_wingtech.h>
+#include <media/msm_cam_sensor.h>
 
 #define NO_SET_RATE -1
 #define INIT_RATE -2
