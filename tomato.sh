@@ -36,8 +36,9 @@ STRIP="$MODULES_DIR/../../../Toolchains/aarch64-5.1/bin/aarch64-strip"
 
 compile_kernel ()
 {
-rm $MODULES_DIR/../TomatoOutput/dt.img
-rm $MODULES_DIR/../TomatoOutput/zImage
+rm $MODULES_DIR/../TomatoOutput/anykernel/dt.img
+rm $MODULES_DIR/../TomatoOutput/anykernel/zImage
+rm $MODULES_DIR/../TomatoOutput/anykernel/system/lib/modules/*
 rm $KERNEL_DIR/arch/arm64/boot/Image
 rm $KERNEL_DIR/arch/arm64/boot/dt.img
 echo -e "                                        "
@@ -94,13 +95,13 @@ rm -rf $KERNEL_DIR/arch/arm/boot/dt.img
 compile_kernel
 ;;
 esac
-cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../TomatoOutput/zImage
-cp $KERNEL_DIR/arch/arm64/boot/dt.img  $MODULES_DIR/../TomatoOutput
-cp $MODULES_DIR/* $MODULES_DIR/../TomatoOutput/modules/
-cd $MODULES_DIR/../TomatoOutput
-zipfile="RRV2.2TOMATOSABER-$(date +"%Y-%m-%d(%I.%M%p)").zip"
-zip -r $zipfile modules patch ramdisk tools anykernel.sh dt.img zImage META-INF etc -x *kernel/.gitignore*
-dropbox_uploader -p upload $MODULES_DIR/../TomatoOutput/$zipfile /
+cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../TomatoOutput/anykernel/zImage
+cp $KERNEL_DIR/arch/arm64/boot/dt.img  $MODULES_DIR/../TomatoOutput/anykernel/
+cp $MODULES_DIR/* $MODULES_DIR/../TomatoOutput/anykernel/system/lib/modules/
+cd $MODULES_DIR/../TomatoOutput/anykernel/
+zipfile="TEAMRAZOR-ALPHA-0.5-$(date +"%Y-%m-%d(%I.%M%p)").zip"
+zip -r ../$zipfile ramdisk anykernel.sh dt.img README zImage system tools META-INF -x *kernel/.gitignore*
+dropbox_uploader -p upload $MODULES_DIR/../TomatoOutput/$zipfile /test/
 dropbox_uploader share /$zipfile
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
