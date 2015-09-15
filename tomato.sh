@@ -102,7 +102,7 @@ cd $MODULES_DIR/../TomatoOutput/anykernel/
 zipfile="TEAMRAZOR-ALPHA-0.5-$(date +"%Y-%m-%d(%I.%M%p)").zip"
 zip -r ../$zipfile ramdisk anykernel.sh dt.img README zImage system tools META-INF -x *kernel/.gitignore*
 dropbox_uploader -p upload $MODULES_DIR/../TomatoOutput/$zipfile /test/
-dropbox_uploader share /$zipfile
+dropbox_uploader share /test/$zipfile
 BUILD_END=$(date +"%s")
 DIFF=$(($BUILD_END - $BUILD_START))
 echo -e "$yellow Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds.$nocol"
