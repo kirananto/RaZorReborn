@@ -86,6 +86,7 @@ obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_DSX_FW_UPDATE) 	+= synaptics_fw_update.o
 obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_RMI4)		+= synaptics_i2c_rmi4.o
 
 obj-$(CONFIG_TOUCHSCREEN_GT9XX)		+= gt9xx/
+obj-y += touchboost.o
 obj-$(CONFIG_TOUCHSCREEN_YL_GT9XX)	+= gt9xx_yl/
 obj-$(CONFIG_TOUCHSCREEN_WT_GT9XX)	+= gt9xx_wt/
 
