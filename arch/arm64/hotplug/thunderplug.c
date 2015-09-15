@@ -265,8 +265,8 @@ static ssize_t thunderplug_hp_enabled_show(struct kobject *kobj, struct kobj_att
 static ssize_t __ref thunderplug_hp_enabled_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count)
 {
 	int val;
-	sscanf(buf, "%d", &val);
 	int last_val = tplug_hp_enabled;
+	sscanf(buf, "%d", &val);
 	switch(val)
 	{
 		case 0:
