@@ -25,14 +25,14 @@ yellow='\033[0;33m'
 red='\033[0;31m'
 nocol='\033[0m'
 # Modify the following variable if you want to build
-export CROSS_COMPILE="$MODULES_DIR/../../../Toolchains/aarch64-5.1/bin/aarch64-"
+export CROSS_COMPILE="$MODULES_DIR/../../../Toolchains/arch6/bin/aarch64-"
 export LD_LIBRARY_PATH="$MODULES_DIR/../../../Toolchains/sabermod-prebuilts/usr/lib/"
 export USE_CCACHE=1
 export ARCH=arm64
 export SUBARCH=arm64
 export KBUILD_BUILD_USER="Kiran.Anto"
 export KBUILD_BUILD_HOST="RaZor-Machine"
-STRIP="$MODULES_DIR/../../../Toolchains/aarch64-5.1/bin/aarch64-strip"
+STRIP="$MODULES_DIR/../../../Toolchains/arch6/bin/aarch64-strip"
 
 compile_kernel ()
 {
@@ -99,7 +99,7 @@ cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../TomatoOutput/anykernel/zIm
 cp $KERNEL_DIR/arch/arm64/boot/dt.img  $MODULES_DIR/../TomatoOutput/anykernel/
 cp $MODULES_DIR/* $MODULES_DIR/../TomatoOutput/anykernel/system/lib/modules/
 cd $MODULES_DIR/../TomatoOutput/anykernel/
-zipfile="TEAMRAZOR-ALPHA-0.7-$(date +"%Y-%m-%d(%I.%M%p)").zip"
+zipfile="TEAMRAZOR-ALPHA-0.8-$(date +"%Y-%m-%d(%I.%M%p)").zip"
 zip -r ../$zipfile ramdisk anykernel.sh dt.img README zImage system tools META-INF -x *kernel/.gitignore*
 dropbox_uploader -p upload $MODULES_DIR/../TomatoOutput/$zipfile /test/
 dropbox_uploader share /test/$zipfile
