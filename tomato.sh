@@ -41,28 +41,24 @@ rm $MODULES_DIR/../TomatoOutput/anykernel/zImage
 rm $MODULES_DIR/../TomatoOutput/anykernel/system/lib/modules/*
 rm $KERNEL_DIR/arch/arm64/boot/Image
 rm $KERNEL_DIR/arch/arm64/boot/dt.img
-echo -e "                                        "
-echo -e "****************************************"
-echo -e "****************************************"
-echo -e "                                        "
-echo -e "                                        "
-echo -e "    ________  ______  _____  ___  __    "
-echo -e "   |___  ___|| _____||  _  ||   \/  |   "
-echo -e "       | |   | |___  | /_\ ||       |   "
-echo -e "       | |   |  ___| |  _  || |\ /| |   "
-echo -e "       | |   | |____ | / \ || |   | |   "
-echo -e "       |_|   |______||_| |_||_|   |_|   "
-echo -e "  _____   _____  _______ _____  _____   "
-echo -e " |  _  \ |  _  ||___   /|  _  ||  _  \  "
-echo -e " | |_|  || /_\ |    / / | | | || |_|  | "
-echo -e " |    _/ |  _  |   / /  | | | ||    _/  "
-echo -e " | |\ \  | / \ |  / /   | | | || |\ \   "
-echo -e " | | \ \ | | | | / /__  | |_| || | \ \  "
-echo -e " |_|  \_\|_| |_|/_____| |_____||_|  \_\ "
-echo -e "                                        "
-echo -e "                                        "
-echo -e "****************************************"
-echo -e "****************************************"
+echo -e "****************************************************"
+echo -e "****************************************************"
+echo -e "         _____   _____  _______ _____  _____   "
+echo -e "        |  _  \ |  _  ||___   /|  _  ||  _  \  "
+echo -e "        | |_|  || /_\ |    / / | | | || |_|  | "
+echo -e "        |    _/ |  _  |   / /  | | | ||    _/  "
+echo -e "        | |\ \  | / \ |  / /   | | | || |\ \   "
+echo -e "        | | \ \ | | | | / /__  | |_| || | \ \  "
+echo -e "        |_|  \_\|_| |_|/_____| |_____||_|  \_\ "
+echo -e "  _____   _____  ____   _____  _____   ___      _ "
+echo -e " |  _  \ | ____||  _ \ |  _  ||  _  \ |   \    | |"
+echo -e " | |_|  || |    | |_| \| | | || |_|  || |\ \   | |"
+echo -e " |    _/ | |___ |     || | | ||    _/ | | \ \  | |"
+echo -e " | |\ \  |  ___||  _  || | | || |\ \  | |  \ \ | |"
+echo -e " | | \ \ | |___ | |_| /| |_| || | \ \ | |   \ \| |"
+echo -e " |_|  \_\|_____||____/ |_____||_|  \_\|_|    \___|"
+echo -e "****************************************************"
+echo -e "****************************************************"
 make cyanogenmod_tomato-64_defconfig
 make -j12
 if ! [ -a $KERN_IMG ];
@@ -99,7 +95,7 @@ cp $KERNEL_DIR/arch/arm64/boot/Image  $MODULES_DIR/../TomatoOutput/anykernel/zIm
 cp $KERNEL_DIR/arch/arm64/boot/dt.img  $MODULES_DIR/../TomatoOutput/anykernel/
 cp $MODULES_DIR/* $MODULES_DIR/../TomatoOutput/anykernel/system/lib/modules/
 cd $MODULES_DIR/../TomatoOutput/anykernel/
-zipfile="TEAMRAZOR-ALPHA-0.8-$(date +"%Y-%m-%d(%I.%M%p)").zip"
+zipfile="RR3.0Tomato-Test-$(date +"%Y-%m-%d(%I.%M%p)").zip"
 zip -r ../$zipfile ramdisk anykernel.sh dt.img README zImage system tools META-INF -x *kernel/.gitignore*
 dropbox_uploader -p upload $MODULES_DIR/../TomatoOutput/$zipfile /test/
 dropbox_uploader share /test/$zipfile
